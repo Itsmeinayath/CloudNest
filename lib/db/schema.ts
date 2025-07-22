@@ -4,6 +4,9 @@ import { relations } from "drizzle-orm"
 // Think of this as creating a "files" table in your database
 // Just like how Google Drive stores info about every file and folder you have
 export const files = pgTable("files", {
+    // 🆔 IMAGEKIT ID - Unique identifier for files in ImageKit storage
+
+    imageKitFileId: text("imagekit_file_id"), // The unique ID from ImageKit
     
     // 🆔 UNIQUE ID - Every file/folder needs a unique "fingerprint"
     // Like how every person has a unique social security number
