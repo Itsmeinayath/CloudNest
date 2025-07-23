@@ -1,285 +1,195 @@
-"use client"
+"use client";
 
-// 🧰 IMPORT ALL THE TOOLS WE NEED
-import { signInSchema } from "@/schemas/signInSchema"
-import { useSignIn } from "@clerk/nextjs"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { set, z } from "zod"
+import { useState } from 'react';
+import { useSignIn } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
-// HeroUI components - our beautiful building blocks
-import { Button } from "@heroui/button"
-import { Input } from "@heroui/input"
-import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card"
-import { Divider } from "@heroui/divider"
-
-// Icons from Lucide React - beautiful, consistent icons
-import {
-  Mail,           // Email icon
-  Lock,           // Password/security icon
-  AlertCircle,    // Error/warning icon
-  CheckCircle,    // Success/checkmark icon
-  Eye,            // Show password icon
-  EyeOff,         // Hide password icon
-} from "lucide-react"
-
-// Next.js optimized Link component
-import Link from "next/link"
+// A better Google SVG icon
+const GoogleIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21.35 11.1H12.18V13.83H18.68C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5.03 16.25 5.03 12.55C5.03 8.85 8.36 5.83 12.19 5.83C14.29 5.83 15.99 6.69 17.29 7.84L19.38 5.83C17.38 3.99 15.08 3 12.19 3C7.03 3 3 7.54 3 12.55C3 17.56 7.03 22.1 12.19 22.1C17.64 22.1 21.55 18.27 21.55 12.81C21.55 12.21 21.48 11.65 21.35 11.1Z" fill="#FFFFFF"/>
+    </svg>
+);
 
 export default function SignInForm() {
-    // 🎛️ YOUR EXACT ORIGINAL CODE - UNCHANGED!
-    const router = useRouter()
-    const {signIn,isLoaded,setActive} = useSignIn()
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [authError, setAuthError] = useState<string | null>(null)
-    
-    // 🎨 ADDED: Password visibility toggle (for UI only)
-    const [showPassword, setShowPassword] = useState(false)
+  const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter();
 
-    // 🎯 YOUR EXACT FORM SETUP - UNCHANGED!
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }, // Added this to show validation errors in UI
-    } = useForm({
-        resolver:zodResolver(signInSchema),
-        defaultValues:{
-            identifier:"",
-            password:""
-        }
-    })
+  const [step, setStep] = useState<'email' | 'password'>('email');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-    // 🚀 YOUR EXACT SUBMIT HANDLER - UNCHANGED!
-    const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+  const handleGoogleSignIn = async () => {
+    if (!isLoaded) return;
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: 'oauth_google',
+        redirectUrl: '/sso-callback',
+        redirectUrlComplete: '/dashboard',
+      });
+    } catch (err: any) {
+      setError(err.errors?.[0]?.message || 'An error occurred with Google Sign-In.');
+    }
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoaded) return;
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn.create({ identifier: email });
+      const firstFactor = result.supportedFirstFactors?.find(
+        (factor) => factor.strategy === 'password'
+      );
+
+      if (firstFactor) {
+        setStep('password');
+      } else {
+        setError("Password is not a supported sign-in method for this account.");
+      }
+    } catch (err: any) {
+      setError(err.errors?.[0]?.message || 'An error occurred. Please check your email and try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoaded) return;
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn.attemptFirstFactor({ strategy: 'password', password });
+
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+        router.push('/dashboard');
+      } else if (result.status === 'needs_second_factor') {
+        setError("Two-factor authentication is required.");
+      }
+    } catch (err: any) {
+      setError(err.errors?.[0]?.message || 'Invalid password. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, x: 100 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -100 },
+  };
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#111113] p-4 font-sans">
+      <div className="w-full max-w-md bg-[#18181B] border border-zinc-800 rounded-2xl p-8 text-white shadow-2xl shadow-purple-900/10">
         
-        if(!isLoaded) return
-        setIsSubmitting(true)
-        setAuthError(null)
-
-        try {
-           const result = await signIn.create({
-                identifier: data.identifier,
-                password: data.password,
-        })
-
-        if (result.status === "complete"){
-            await setActive({session: result.createdSessionId});
-            router.push("/dashboard")
-        }
-        else{
-            setAuthError("Sign in failed. Please check your credentials and try again.")
-        }
-
-        } catch (error:any) {
-            setAuthError(
-                error.errors?.[0]?.message || "An unexpected error occurred during sign in. Please try again."
-            )
-            
-        }finally{
-            setIsSubmitting(false)
-            if (authError === null) {
-                router.push("/dashboard")
-            }
-        }
-    }   
-
-    // 🎨 BEAUTIFUL UI WRAPPED AROUND YOUR LOGIC
-    return(
-        // 🌈 FULL-SCREEN BACKGROUND WITH GRADIENT
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
-          
-          {/* 🏠 MAIN SIGN-IN CARD */}
-          <Card className="w-full max-w-md border border-default-200 bg-white/90 backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300">
-            
-            {/* 📋 FORM HEADER */}
-            <CardHeader className="flex flex-col gap-3 items-center pb-2 pt-8">
-              
-              {/* 🎯 BEAUTIFUL WELCOME BACK ICON */}
-              <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-                  {/* Welcome back / login icon */}
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                </div>
-                
-                {/* ✨ FLOATING DECORATIVE ELEMENTS */}
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
-                <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
-              </div>
-              
-              <div className="text-center">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent mb-2">
-                  Welcome Back
-                </h1>
-                <p className="text-default-500 text-center leading-relaxed">
-                  Sign in to <span className="font-semibold text-blue-600">CloudNest</span> and access your<br />
-                  secure cloud storage 🗂️
-                </p>
-              </div>
-            </CardHeader>
-
-            {/* ➖ ELEGANT SEPARATOR */}
-            <Divider className="bg-gradient-to-r from-transparent via-default-200 to-transparent mx-6" />
-
-            <CardBody className="py-6 px-6">
-              
-              {/* 🚨 YOUR EXACT ERROR HANDLING - JUST PRETTIER */}
-              {authError && (
-                <div className="bg-danger-50 border-l-4 border-danger-400 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-3 animate-in slide-in-from-top-2">
-                  <AlertCircle className="h-5 w-5 flex-shrink-0 text-danger-500" />
-                  <div>
-                    <p className="font-medium text-sm">Sign-in Error</p>
-                    <p className="text-sm opacity-90">{authError}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* 📝 YOUR EXACT FORM - JUST BEAUTIFUL */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                
-                {/* 📧 EMAIL/USERNAME INPUT FIELD */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="identifier"
-                    className="text-sm font-semibold text-default-900 flex items-center gap-2"
-                  >
-                    <Mail className="h-4 w-4 text-blue-500" />
-                    Email Address
-                  </label>
-                  <Input
-                    id="identifier"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    startContent={<Mail className="h-4 w-4 text-default-400" />}
-                    isInvalid={!!errors.identifier}
-                    errorMessage={errors.identifier?.message}
-                    {...register("identifier")}
-                    className="w-full"
-                    classNames={{
-                      inputWrapper: `border-2 transition-all duration-200 hover:border-blue-300 
-                        ${errors.identifier ? 'border-danger-300' : 'border-default-300'} 
-                        focus-within:border-blue-500 focus-within:shadow-lg focus-within:shadow-blue-100`,
-                      input: "text-default-900 placeholder:text-default-400"
-                    }}
-                  />
-                </div>
-
-                {/* 🔐 PASSWORD INPUT FIELD */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label
-                      htmlFor="password"
-                      className="text-sm font-semibold text-default-900 flex items-center gap-2"
-                    >
-                      <Lock className="h-4 w-4 text-green-500" />
-                      Password
-                    </label>
-                    
-                    {/* 🔗 FORGOT PASSWORD LINK */}
-                    <Link
-                      href="/forgot-password"
-                      className="text-xs text-primary hover:text-primary-600 font-medium hover:underline transition-all"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
-                  
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    startContent={<Lock className="h-4 w-4 text-default-400" />}
-                    endContent={
-                      <Button
-                        isIconOnly
-                        variant="light"
-                        size="sm"
-                        onClick={() => setShowPassword(!showPassword)}
-                        type="button"
-                        className="hover:bg-default-100 transition-colors"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-default-500" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-default-500" />
-                        )}
-                      </Button>
-                    }
-                    isInvalid={!!errors.password}
-                    errorMessage={errors.password?.message}
-                    {...register("password")}
-                    className="w-full"
-                    classNames={{
-                      inputWrapper: `border-2 transition-all duration-200 hover:border-green-300 
-                        ${errors.password ? 'border-danger-300' : 'border-default-300'} 
-                        focus-within:border-green-500 focus-within:shadow-lg focus-within:shadow-green-100`
-                    }}
-                  />
-                </div>
-
-                {/* 🎯 SECURITY TRUST INDICATOR */}
-                <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-lg border border-green-100">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm text-default-700 font-medium">
-                        🔒 Secure Sign-In
-                      </p>
-                      <p className="text-xs text-default-600 leading-relaxed">
-                        Your connection is encrypted and your data is protected
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 🚀 YOUR EXACT SUBMIT BUTTON - JUST BEAUTIFUL */}
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                  isLoading={isSubmitting}
-                  startContent={!isSubmitting ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
-                  ) : null}
-                >
-                  {isSubmitting ? "Signing you in..." : "Sign In"}
-                </Button>
-
-                {/* 🎯 ADDITIONAL TRUST SIGNALS */}
-                <div className="text-center">
-                  <p className="text-xs text-default-500">
-                    🛡️ Protected by enterprise-grade security
-                  </p>
-                </div>
-              </form>
-            </CardBody>
-
-            {/* ➖ FOOTER SEPARATOR */}
-            <Divider className="bg-gradient-to-r from-transparent via-default-200 to-transparent mx-6" />
-
-            {/* 🔗 FOOTER WITH SIGN-UP LINK */}
-            <CardFooter className="flex justify-center py-6">
-              <div className="text-center space-y-2">
-                <p className="text-sm text-default-600">
-                  Don't have an account?{" "}
-                  <Link
-                    href="/sign-up"
-                    className="text-primary hover:text-primary-600 font-semibold underline-offset-2 hover:underline transition-all"
-                  >
-                    Sign up here
-                  </Link>
-                </p>
-                <p className="text-xs text-default-400">
-                  🚀 Join thousands of users managing their files securely
-                </p>
-              </div>
-            </CardFooter>
-          </Card>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white tracking-tight">Sign in to CloudNest</h1>
+          <p className="text-zinc-400 mt-2 text-sm">Welcome back! Please sign in to continue</p>
         </div>
-    )
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors mb-6 text-sm font-medium"
+        >
+          <GoogleIcon />
+          Continue with Google
+        </button>
+
+        <div className="flex items-center gap-4 mb-6">
+          <hr className="w-full border-zinc-700" />
+          <span className="text-zinc-500 text-xs font-medium">OR</span>
+          <hr className="w-full border-zinc-700" />
+        </div>
+
+        <AnimatePresence mode="wait">
+          {step === 'email' && (
+            <motion.form
+              key="email"
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onSubmit={handleEmailSubmit}
+            >
+              <label htmlFor="email" className="text-sm font-medium text-zinc-300 mb-2 block">Email address</label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="w-full bg-zinc-900/50 border border-zinc-700 rounded-lg py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 mt-6 py-3 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]"
+              >
+                {isLoading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="h-5 w-5" /></>}
+              </button>
+            </motion.form>
+          )}
+
+          {step === 'password' && (
+            <motion.form
+              key="password"
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onSubmit={handlePasswordSubmit}
+            >
+              <label htmlFor="password" className="text-sm font-medium text-zinc-300 mb-2 block">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full bg-zinc-900/50 border border-zinc-700 rounded-lg py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                  required
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 mt-6 py-3 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]"
+              >
+                {isLoading ? <Loader2 className="animate-spin" /> : 'Sign In'}
+              </button>
+            </motion.form>
+          )}
+        </AnimatePresence>
+
+        {error && <p className="text-red-400 text-sm mt-4 text-center animate-pulse">{error}</p>}
+
+        <p className="text-center text-zinc-400 text-sm mt-8">
+          Don't have an account?{' '}
+          <Link href="/sign-up" className="text-purple-400 hover:text-purple-300 hover:underline font-medium transition-colors">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
