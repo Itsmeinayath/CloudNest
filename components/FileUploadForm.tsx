@@ -124,7 +124,7 @@ export default function FileUploadForm({ userId, currentFolder, onUploadSuccess 
             onUploadProgress={handleUploadProgress}
             onSuccess={handleSuccess}
             onError={handleError}
-            validateFile={file => file.size < 100 * 1024 * 1024} // 100MB limit
+            validateFile={(file: File) => file.size < 100 * 1024 * 1024} // 100MB limit
           />
         </label>
       </div>
