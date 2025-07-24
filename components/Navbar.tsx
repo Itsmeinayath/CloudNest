@@ -20,29 +20,29 @@ const Logo = () => (
 );
 
 // Theme switcher button component
-const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+// const ThemeSwitcher = () => {
+//   const { theme, setTheme } = useTheme();
+//   const [mounted, setMounted] = useState(false);
 
-  // useEffect only runs on the client, so we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+//   // useEffect only runs on the client, so we can safely show the UI
+//   useEffect(() => {
+//     setMounted(true);
+//   }, []);
 
-  if (!mounted) {
-    return null; // return null on the server to avoid hydration mismatch
-  }
+//   if (!mounted) {
+//     return null; // return null on the server to avoid hydration mismatch
+//   }
 
-  return (
-    <button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-      aria-label="Toggle theme"
-    >
-      {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
-  );
-};
+//   return (
+//     <button
+//       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+//       className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+//       aria-label="Toggle theme"
+//     >
+//       {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+//     </button>
+//   );
+// };
 
 export default function Navbar() {
   return (
@@ -59,10 +59,10 @@ export default function Navbar() {
           </Link>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <ThemeSwitcher />
             <UserButton afterSignOutUrl="/" />
-          </div>
+          </div> */}
 
         </div>
       </div>

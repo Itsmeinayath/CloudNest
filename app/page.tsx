@@ -1,174 +1,111 @@
-import { Button } from "@heroui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
-import { Card, CardBody } from "@heroui/card";
-import {
-  CloudUpload,
-  Shield,
-  Folder,
-  Image as ImageIcon,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight, Cloud, Lock, Zap, Search, Bot } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
-export default function Home() {
+// A reusable Feature Card component for a consistent look
+const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string; }) => (
+  <div className="p-6 bg-gray-800/50 border border-gray-700 rounded-xl shadow-lg hover:bg-gray-800 hover:border-purple-500 transition-all duration-300 transform hover:-translate-y-1">
+    <div className="flex items-center justify-center w-12 h-12 mb-4 bg-gray-700 rounded-lg border border-gray-600">
+      {icon}
+    </div>
+    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+    <p className="text-gray-400">{description}</p>
+  </div>
+);
+
+export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-default-50">
-      {/* Use the unified Navbar component */}
+    // Set a solid background color for the main container to prevent transparency issues
+    <div className="min-h-screen flex flex-col bg-gray-900 text-white font-sans">
       <Navbar />
 
-      {/* Main content */}
       <main className="flex-1">
-        {/* Hero section */}
-        <section className="py-12 md:py-20 px-4 md:px-6">
-          <div className="container mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-              <div className="space-y-6 text-center lg:text-left">
-                <div>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-default-900 leading-tight">
-                    Store your <span className="text-primary">images</span> with
-                    ease
-                  </h1>
-                  <p className="text-lg md:text-xl text-default-600">
-                    Simple. Secure. Fast.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
-                  <SignedOut>
-                    <Link href="/sign-up">
-                      <Button size="lg" variant="solid" color="primary">
-                        Get Started
-                      </Button>
-                    </Link>
-                    <Link href="/sign-in">
-                      <Button size="lg" variant="flat" color="primary">
-                        Sign In
-                      </Button>
-                    </Link>
-                  </SignedOut>
-                  <SignedIn>
-                    <Link href="/dashboard">
-                      <Button
-                        size="lg"
-                        variant="solid"
-                        color="primary"
-                        endContent={<ArrowRight className="h-4 w-4" />}
-                      >
-                        Go to Dashboard
-                      </Button>
-                    </Link>
-                  </SignedIn>
-                </div>
-              </div>
-
-              <div className="flex justify-center order-first lg:order-last">
-                <div className="relative w-64 h-64 md:w-80 md:h-80">
-                  <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ImageIcon className="h-24 md:h-32 w-24 md:w-32 text-primary/70" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features section */}
-        <section className="py-12 md:py-16 px-4 md:px-6 bg-default-50">
-          <div className="container mx-auto">
-            <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-default-900">
-                What You Get
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardBody className="p-6 text-center">
-                  <CloudUpload className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Quick Uploads
-                  </h3>
-                  <p className="text-default-600">Drag, drop, done.</p>
-                </CardBody>
-              </Card>
-
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardBody className="p-6 text-center">
-                  <Folder className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Smart Organization
-                  </h3>
-                  <p className="text-default-600">
-                    Keep it tidy, find it fast.
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow sm:col-span-2 md:col-span-1 mx-auto sm:mx-0 max-w-md sm:max-w-full">
-                <CardBody className="p-6 text-center">
-                  <Shield className="h-10 md:h-12 w-10 md:w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-default-900">
-                    Locked Down
-                  </h3>
-                  <p className="text-default-600">
-                    Your images, your eyes only.
-                  </p>
-                </CardBody>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA section */}
-        <section className="py-12 md:py-20 px-4 md:px-6 bg-default-50">
-          <div className="container mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-default-900">
-              Ready?
-            </h2>
-            <SignedOut>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
+        {/* Hero Section */}
+        <section className="relative py-24 md:py-32 px-4 text-center overflow-hidden bg-gray-900">
+          <div className="absolute inset-0 -top-1/2 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+          <div className="container mx-auto relative z-10">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              Your Personal Cloud, Reimagined
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+              Securely store, manage, and find your files with an intelligent, AI-powered cloud platform. Simple, fast, and built for you.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <SignedOut>
                 <Link href="/sign-up">
-                  <Button
-                    size="lg"
-                    variant="solid"
-                    color="primary"
-                    endContent={<ArrowRight className="h-4 w-4" />}
-                  >
-                    Let's Go
-                  </Button>
+                  <button className="px-8 py-3 bg-white text-black font-semibold rounded-lg shadow-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+                    Get Started for Free
+                  </button>
                 </Link>
-              </div>
+                <Link href="/sign-in">
+                  <button className="px-8 py-3 bg-gray-800/50 text-white font-semibold rounded-lg border border-gray-700 hover:bg-gray-800 transition-all duration-300">
+                    Sign In
+                  </button>
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/dashboard">
+                  <button className="flex items-center gap-2 px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105">
+                    Go to Dashboard <ArrowRight className="h-5 w-5" />
+                  </button>
+                </Link>
+              </SignedIn>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 px-4 md:px-6 bg-gray-900">
+          <div className="container mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                More Than Just Storage
+              </h2>
+              <p className="text-gray-400 max-w-xl mx-auto">
+                CloudNest is packed with features to make your life easier.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <FeatureCard icon={<Cloud className="w-6 h-6 text-blue-400" />} title="Seamless Uploads" description="Effortlessly upload any file type with our simple drag-and-drop interface." />
+              <FeatureCard icon={<Lock className="w-6 h-6 text-green-400" />} title="Fort-Knox Security" description="Your files are encrypted and protected, accessible only by you." />
+              <FeatureCard icon={<Search className="w-6 h-6 text-purple-400" />} title="AI-Powered Search" description="Find any image by describing it. No more endless scrolling." />
+              <FeatureCard icon={<Zap className="w-6 h-6 text-yellow-400" />} title="Blazing Fast" description="Built on a modern stack for a smooth, responsive, and fast experience." />
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 px-4 md:px-6 bg-gray-900">
+          <div className="container mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Ready to Get Started?
+            </h2>
+            <p className="text-gray-400 mb-8">
+              Sign up in seconds and get access to your own smart cloud.
+            </p>
+            <SignedOut>
+              <Link href="/sign-up">
+                <button className="flex items-center gap-2 mx-auto px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105">
+                  Let's Go <ArrowRight className="h-5 w-5" />
+                </button>
+              </Link>
             </SignedOut>
             <SignedIn>
               <Link href="/dashboard">
-                <Button
-                  size="lg"
-                  variant="solid"
-                  color="primary"
-                  endContent={<ArrowRight className="h-4 w-4" />}
-                >
-                  Dashboard
-                </Button>
+                <button className="flex items-center gap-2 mx-auto px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105">
+                  Back to Dashboard <ArrowRight className="h-5 w-5" />
+                </button>
               </Link>
             </SignedIn>
           </div>
         </section>
       </main>
 
-      {/* Simple footer */}
-      <footer className="bg-default-50 border-t border-default-200 py-4 md:py-6">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <CloudUpload className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">CloudNest</h2>
-            </div>
-            <p className="text-default-500 text-sm">
-              &copy; {new Date().getFullYear()} CloudNest
-            </p>
-          </div>
+      {/* Footer */}
+      <footer className="bg-gray-900 border-t border-gray-800 py-6">
+        <div className="container mx-auto px-4 md:px-6 text-center text-gray-500">
+          <p>&copy; {new Date().getFullYear()} CloudNest. All rights reserved.</p>
         </div>
       </footer>
     </div>
