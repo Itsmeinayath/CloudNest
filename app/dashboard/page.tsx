@@ -1,58 +1,32 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import DashboardContent from "@/components/DashboardContent"
-import { CloudUpload } from "lucide-react";
-import Navbar from "@/components/Navbar";
+import { currentUser } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default async function Dashboard() {
-  const { userId } = await auth();
+import Navbar from '@/components/Navbar';
+import DashboardContent from '@/components/DashboardContent';
+
+// This is a Server Component, so we can fetch data directly on the server.
+export default async function DashboardPage() {
+  // Get the authenticated user from Clerk.
   const user = await currentUser();
 
-  if (!userId) {
-    redirect("/sign-in");
+  // If the user is not logged in, protect the page by redirecting to the sign-in page.
+  if (!user) {
+    redirect('/sign-in');
   }
 
-  // Serialize the user data to avoid passing the Clerk User object directly
-  const serializedUser = user
-    ? {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        username: user.username,
-        emailAddress: user.emailAddresses?.[0]?.emailAddress,
-      }
-    : null;
-
   return (
-    <div className="min-h-screen flex flex-col bg-default-50">
-      <Navbar user={serializedUser} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* The Navbar is rendered at the top of the page. */}
+      <Navbar />
 
-      <main className="flex-1 container mx-auto py-8 px-6">
-        <DashboardContent
-          userId={userId}
-          userName={
-            user?.firstName ||
-            user?.fullName ||
-            user?.emailAddresses?.[0]?.emailAddress ||
-            ""
-          }
+      {/* The main content area of the dashboard. */}
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* We pass the user's ID and name down to the DashboardContent client component. */}
+        <DashboardContent 
+          userId={user.id} 
+          userName={user.firstName || user.emailAddresses[0].emailAddress} 
         />
       </main>
-
-      <footer className="bg-default-50 border-t border-default-200 py-6">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <CloudUpload className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">Droply</h2>
-            </div>
-            <p className="text-default-500 text-sm">
-              &copy; {new Date().getFullYear()} Droply
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

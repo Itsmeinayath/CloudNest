@@ -23,6 +23,7 @@ export const files = pgTable("files", {
     // 🗄️ STORAGE URLS - Where the actual file data lives
     fileUrl: text("file_url"), // Direct link to download/view the file
     thumbnailUrl: text("thumbnail_url"), // Small preview image (like file icons)
+    description: text("description"), // AI-generated description of the file
 
     // 👤 OWNERSHIP - Who owns this file and where it belongs
     userId: text("user_id").notNull(), // Which user account owns this file
