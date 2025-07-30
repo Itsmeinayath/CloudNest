@@ -2,18 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { File as FileType } from '@/lib/db/schema';
-import { MoreVertical, Star, Trash2, Download } from 'lucide-react';
-import FileActionButton from './FileActionButton'; // Import the new button component
+import { MoreVertical, Star, Trash2, Download, Undo, Trash } from 'lucide-react';
+import FileActionButton from './FileActionButton';
 
 type FileActionProps = {
   file: FileType;
   onStar: (file: FileType) => void;
   onDelete: (file: FileType) => void;
+  // New props for trash-specific actions
+  onRestore: (file: FileType) => void;
+  onDeleteForever: (file: FileType) => void;
 };
 
-export default function FileAction({ file, onStar, onDelete }: FileActionProps) {
+export default function FileAction({ file, onStar, onDelete, onRestore, onDeleteForever }: FileActionProps) {
   const [isOpen, setIsOpen] = useState(false);
-  // useRef is used to get a direct reference to the dropdown menu DOM element.
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = () => {
@@ -27,24 +29,19 @@ export default function FileAction({ file, onStar, onDelete }: FileActionProps) 
     }
   };
 
-  // This 'useEffect' hook adds an event listener to the whole document.
-  // It checks for clicks, and if a click happens outside the menu, it closes it.
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-    // Add the listener when the component mounts.
     document.addEventListener("mousedown", handleClickOutside);
-    // Clean up the listener when the component unmounts to prevent memory leaks.
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
 
   return (
-    // We attach the 'menuRef' to our main div here.
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -56,26 +53,46 @@ export default function FileAction({ file, onStar, onDelete }: FileActionProps) 
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
           <ul className="py-1">
-            {/* Now we use our reusable FileActionButton component for each action. */}
-            <FileActionButton onClick={() => { onStar(file); setIsOpen(false); }}>
-              <Star className={`w-4 h-4 mr-3 ${file.isStarred ? 'text-yellow-500 fill-current' : ''}`} />
-              {file.isStarred ? 'Unstar' : 'Star'}
-            </FileActionButton>
-            
-            {!file.isFolder && (
-              <FileActionButton onClick={handleDownload}>
-                <Download className="w-4 h-4 mr-3" />
-                Download
-              </FileActionButton>
-            )}
+            {/* --- CONTEXT-AWARE ACTIONS --- */}
+            {file.isTrash ? (
+              // Actions for files IN the trash
+              <>
+                <FileActionButton onClick={() => { onRestore(file); setIsOpen(false); }}>
+                  <Undo className="w-4 h-4 mr-3" />
+                  Restore
+                </FileActionButton>
+                <FileActionButton 
+                  onClick={() => { onDeleteForever(file); setIsOpen(false); }}
+                  className="!text-red-600 dark:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/50"
+                >
+                  <Trash className="w-4 h-4 mr-3" />
+                  Delete Forever
+                </FileActionButton>
+              </>
+            ) : (
+              // Actions for files NOT in the trash
+              <>
+                <FileActionButton onClick={() => { onStar(file); setIsOpen(false); }}>
+                  <Star className={`w-4 h-4 mr-3 ${file.isStarred ? 'text-yellow-500 fill-current' : ''}`} />
+                  {file.isStarred ? 'Unstar' : 'Star'}
+                </FileActionButton>
+                
+                {!file.isFolder && (
+                  <FileActionButton onClick={handleDownload}>
+                    <Download className="w-4 h-4 mr-3" />
+                    Download
+                  </FileActionButton>
+                )}
 
-            <FileActionButton 
-              onClick={() => { onDelete(file); setIsOpen(false); }}
-              className="!text-red-600 dark:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/50"
-            >
-              <Trash2 className="w-4 h-4 mr-3" />
-              Delete
-            </FileActionButton>
+                <FileActionButton 
+                  onClick={() => { onDelete(file); setIsOpen(false); }}
+                  className="!text-red-600 dark:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/50"
+                >
+                  <Trash2 className="w-4 h-4 mr-3" />
+                  Move to Trash
+                </FileActionButton>
+              </>
+            )}
           </ul>
         </div>
       )}

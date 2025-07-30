@@ -2,15 +2,25 @@ import type { File as FileType } from "@/lib/db/schema";
 import FileIcon from "./FileIcon";
 import FileAction from "./FileAction";
 
-// This component is now much simpler. It just receives the data and functions it needs.
+// This interface defines all the functions the component needs from its parent.
 interface FileListProps {
   files: FileType[];
-  onFolderChange: (folder: FileType) => void;
+  onFolderClick: (folder: FileType) => void;
   onStar: (file: FileType) => void;
   onDelete: (file: FileType) => void;
+  onRestore: (file: FileType) => void;
+  onDeleteForever: (file: FileType) => void;
 }
 
-export default function FileList({ files, onFolderChange, onStar, onDelete }: FileListProps) {
+export default function FileList({ 
+  files, 
+  onFolderClick, 
+  onStar, 
+  onDelete,
+  onRestore,
+  onDeleteForever
+}: FileListProps) {
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -27,12 +37,19 @@ export default function FileList({ files, onFolderChange, onStar, onDelete }: Fi
           className="group relative flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-blue-500 dark:hover:border-blue-500 hover:-translate-y-1"
           onClick={() => {
             if (file.isFolder) {
-              onFolderChange(file);
+              onFolderClick(file);
             }
           }}
         >
           <div className="absolute top-2 right-2 z-10">
-            <FileAction file={file} onStar={onStar} onDelete={onDelete} />
+            {/* It correctly passes all the functions down to FileAction. */}
+            <FileAction 
+              file={file} 
+              onStar={onStar} 
+              onDelete={onDelete}
+              onRestore={onRestore}
+              onDeleteForever={onDeleteForever}
+            />
           </div>
           
           <FileIcon file={file} />

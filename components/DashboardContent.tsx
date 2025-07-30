@@ -1,54 +1,61 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@clerk/nextjs';
-import type { File } from '@/lib/db/schema';
-import type { TabValue } from './Sidebar';
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useAuth } from "@clerk/nextjs";
+import type { File } from "@/lib/db/schema";
+import type { TabValue } from "./Sidebar";
 
-import Sidebar from './Sidebar';
-import FileList from './FileList';
-import FileLoadingState from './FileLoadingState';
-import FileEmptyState from './FileEmptyState';
-import FolderNavigation from './FolderNavigation';
-import SearchBar from './SearchBar';
+import Sidebar from "./Sidebar";
+import FileList from "./FileList";
+import FileLoadingState from "./FileLoadingState";
+import FileEmptyState from "./FileEmptyState";
+import FolderNavigation from "./FolderNavigation";
+import SearchBar from "./SearchBar";
+import TrashHeader from "./TrashHeader"; // Make sure to import TrashHeader
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardContentProps {
   userId: string;
-  userName:string;
+  userName: string;
 }
 
-export default function DashboardContent({ userId, userName }: DashboardContentProps) {
-  const { isLoaded } = useAuth(); 
-  
+export default function DashboardContent({
+  userId,
+  userName,
+}: DashboardContentProps) {
+  const { isLoaded } = useAuth();
+
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [activeTab, setActiveTab] = useState<TabValue>('files');
+
+  const [activeTab, setActiveTab] = useState<TabValue>("files");
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
-  const [folderPath, setFolderPath] = useState<(File | { id: null; name: 'My Files' })[]>([{ id: null, name: 'My Files' }]);
+  const [folderPath, setFolderPath] = useState<
+    (File | { id: null; name: "My Files" })[]
+  >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      let url = '/api/files';
+      let url = "/api/files";
       const params = new URLSearchParams();
 
       if (searchQuery) {
-        url = '/api/files/search';
-        params.set('q', searchQuery);
+        url = "/api/files/search";
+        params.set("q", searchQuery);
       } else {
-        params.set('filter', activeTab);
-        if (activeTab === 'files' && currentFolderId) {
-          params.set('parentId', currentFolderId);
+        params.set("filter", activeTab);
+        if (activeTab === "files" && currentFolderId) {
+          params.set("parentId", currentFolderId);
         }
       }
 
       const response = await fetch(`${url}?${params.toString()}`);
-      if (!response.ok) throw new Error('Failed to fetch data.');
-      
+      if (!response.ok) throw new Error("Failed to fetch data.");
+
       const data = await response.json();
       setFiles(data);
     } catch (err: any) {
@@ -59,100 +66,140 @@ export default function DashboardContent({ userId, userName }: DashboardContentP
   }, [activeTab, currentFolderId, searchQuery]);
 
   useEffect(() => {
-    if (isLoaded) {
-      fetchData();
-    }
+    if (isLoaded) fetchData();
   }, [isLoaded, fetchData]);
 
-  // --- Event Handlers ---
+  // --- Handlers ---
   const handleTabChange = (tab: TabValue) => {
     setActiveTab(tab);
     setSearchQuery(null);
     setCurrentFolderId(null);
-    setFolderPath([{ id: null, name: 'My Files' }]);
+    setFolderPath([{ id: null, name: "My Files" }]);
   };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setActiveTab('files');
+    setActiveTab("files");
   };
 
-  const handleClearSearch = () => {
-    setSearchQuery(null);
-  };
+  const handleClearSearch = () => setSearchQuery(null);
 
   const handleFolderClick = (folder: File) => {
     if (searchQuery) setSearchQuery(null);
-    setFolderPath(prev => [...prev, folder]);
+    setFolderPath((prev) => [...prev, folder]);
     setCurrentFolderId(folder.id);
   };
 
   const handleBreadcrumbNavigate = (folderId: string | null) => {
-    const folderIndex = folderPath.findIndex(f => f.id === folderId);
+    const folderIndex = folderPath.findIndex((f) => f.id === folderId);
     if (folderIndex !== -1) {
       setFolderPath(folderPath.slice(0, folderIndex + 1));
     }
     setCurrentFolderId(folderId);
   };
 
-  // --- FIXED ACTION HANDLERS ---
-  const handleStarFile = async (fileToStar: File) => {
-    // Perform the API call first
-    await fetch(`/api/files/${fileToStar.id}/star`, { method: 'PATCH' });
-    // Then, refetch the data to ensure all views are consistent.
+  const handleStarFile = async (file: File) => {
+    await fetch(`/api/files/${file.id}/star`, { method: "PATCH" });
     fetchData();
   };
 
-  const handleDeleteFile = async (fileToDelete: File) => {
-    // Perform the API call first
-    await fetch(`/api/files/${fileToDelete.id}/delete`, { method: 'DELETE' });
-    // Then, refetch the data.
+  const handleDeleteFile = async (file: File) => {
+    await fetch(`/api/files/${file.id}/delete`, { method: "DELETE" });
     fetchData();
   };
+
+  const handleRestoreFile = async (file: File) => {
+    // CORRECTED API ENDPOINT
+    await fetch(`/api/files/${file.id}/trash`, { method: "PATCH" });
+    fetchData();
+  };
+
+  const handleDeleteForever = async (file: File) => {
+    // CORRECTED API ENDPOINT
+    await fetch(`/api/files/${file.id}/trash`, { method: "DELETE" });
+    fetchData();
+  };
+
+  const handleEmptyTrash = async () => {
+    await fetch('/api/files/empty-trash', { method: 'DELETE' });
+    fetchData();
+  };
+
+  // Dynamic title
+  const title = useMemo(() => {
+    if (searchQuery) return "Search Results";
+    if (activeTab === "starred") return "Starred";
+    if (activeTab === "trash") return "Trash";
+    return "My Files";
+  }, [activeTab, searchQuery]);
 
   const renderContent = () => {
     if (!isLoaded || isLoading) return <FileLoadingState />;
-    if (error) return <div className="text-center text-red-500 p-8">Error: {error}</div>;
+    if (error)
+      return (
+        <div className="text-center text-red-500 p-8">
+          Error: {error}{" "}
+          <button onClick={fetchData} className="text-blue-400 underline ml-2 hover:text-blue-300">
+            Retry
+          </button>
+        </div>
+      );
     if (files.length === 0) return <FileEmptyState isSearch={!!searchQuery} />;
+
     return (
-      <FileList 
-        files={files} 
-        onStar={handleStarFile} 
+      <FileList
+        files={files}
+        onStar={handleStarFile}
         onDelete={handleDeleteFile}
         onFolderClick={handleFolderClick}
+        onRestore={handleRestoreFile}
+        onDeleteForever={handleDeleteForever}
       />
     );
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 py-8">
-      <Sidebar 
+      <Sidebar
         activeTab={activeTab}
         onTabChange={handleTabChange}
         userId={userId}
         currentFolderId={currentFolderId}
         onUploadSuccess={fetchData}
       />
-
       <div className="flex-1">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {searchQuery ? `Search Results` : 
-             activeTab === 'starred' ? 'Starred' : 
-             activeTab === 'trash' ? 'Trash' : 
-             'My Files'}
+            {title}
           </h1>
           <div className="w-full sm:w-auto sm:max-w-xs">
-            <SearchBar onSearch={handleSearch} onClear={handleClearSearch} isSearching={isLoading} />
+            <SearchBar
+              onSearch={handleSearch}
+              onClear={handleClearSearch}
+              isSearching={isLoading}
+            />
           </div>
         </div>
 
-        {activeTab === 'files' && !searchQuery && (
-          <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
+        {activeTab === "files" && !searchQuery && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
+          </motion.div>
         )}
         
+        {/* Added TrashHeader when trash tab is active */}
+        {activeTab === "trash" && (
+          <TrashHeader
+            onEmptyTrash={handleEmptyTrash}
+            onRestoreAll={async () => {
+              await fetch('/api/files/restore-all', { method: 'PATCH' });
+              fetchData();
+            }}
+          />
+        )}
+
         <div className="mt-4 p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-          {renderContent()}
+          <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
         </div>
       </div>
     </div>
