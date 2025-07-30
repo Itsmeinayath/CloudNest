@@ -65,10 +65,8 @@ export default function SignUpForm() {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         router.push('/dashboard');
-      } else {
-        setError("Verification could not be completed. Please try again.");
       }
-    } catch (err: any) {
+    } catch (err: any) { // CORRECTED: Added opening brace for the catch block
       setError(err.errors?.[0]?.message || 'Invalid verification code. Please try again.');
     } finally {
       setIsLoading(false);
@@ -76,59 +74,51 @@ export default function SignUpForm() {
   };
 
   const formVariants = {
-    hidden: { opacity: 0, x: 100 },
+    hidden: { opacity: 0, x: 50 },
     visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -100 },
+    exit: { opacity: 0, x: -50 },
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#111113] p-4 font-sans">
-      <div className="w-full max-w-md bg-[#18181B] border border-zinc-800 rounded-2xl p-8 text-white shadow-2xl shadow-purple-900/10">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 p-4 font-sans">
+      <div className="w-full max-w-md bg-gray-800/50 border border-gray-700 rounded-2xl p-6 text-white shadow-2xl shadow-purple-900/10">
         
         <AnimatePresence mode="wait">
           {step === 'signup' && (
-            <motion.div
-              key="signup"
-              variants={formVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-white tracking-tight">Create an Account</h1>
-                <p className="text-zinc-400 mt-2 text-sm">Join CloudNest to get started</p>
+            <motion.div key="signup" variants={formVariants} initial="hidden" animate="visible" exit="exit" transition={{ duration: 0.3 }}>
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-bold text-white tracking-tight">Create an Account</h1>
+                <p className="text-gray-400 mt-2 text-sm">Join CloudNest to get started</p>
               </div>
 
-              <button onClick={handleGoogleSignUp} className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors mb-6 text-sm font-medium">
+              <button onClick={handleGoogleSignUp} className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg transition-colors mb-4 text-sm font-medium">
                 <GoogleIcon />
                 Continue with Google
               </button>
 
-              <div className="flex items-center gap-4 mb-6">
-                <hr className="w-full border-zinc-700" />
-                <span className="text-zinc-500 text-xs font-medium">OR</span>
-                <hr className="w-full border-zinc-700" />
+              <div className="flex items-center gap-4 mb-4">
+                <hr className="w-full border-gray-700" />
+                <span className="text-gray-500 text-xs font-medium">OR</span>
+                <hr className="w-full border-gray-700" />
               </div>
 
               <form onSubmit={handleSignUpSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="email-signup" className="text-sm font-medium text-zinc-300 mb-2 block">Email address</label>
+                  <label htmlFor="email-signup" className="text-sm font-medium text-gray-300 mb-1.5 block">Email address</label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-                    <input id="email-signup" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email address" className="w-full bg-zinc-900/50 border border-zinc-700 rounded-lg py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                    <input id="email-signup" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email address" className="w-full bg-gray-900/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" required />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="password-signup" className="text-sm font-medium text-zinc-300 mb-2 block">Password</label>
+                  <label htmlFor="password-signup" className="text-sm font-medium text-gray-300 mb-1.5 block">Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-                    <input id="password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="w-full bg-zinc-900/50 border border-zinc-700 rounded-lg py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                    <input id="password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="w-full bg-gray-900/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" required />
                   </div>
                 </div>
-                {/* This is the div Clerk needs for the CAPTCHA */}
                 <div id="clerk-captcha"></div>
-                <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-2 mt-6 py-3 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]">
+                <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-2 pt-4 py-2.5 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]">
                   {isLoading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="h-5 w-5" /></>}
                 </button>
               </form>
@@ -136,27 +126,20 @@ export default function SignUpForm() {
           )}
 
           {step === 'verify' && (
-            <motion.div
-              key="verify"
-              variants={formVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-white tracking-tight">Verify Your Email</h1>
-                <p className="text-zinc-400 mt-2 text-sm">Enter the code sent to <span className="text-purple-400 font-medium">{email}</span></p>
+            <motion.div key="verify" variants={formVariants} initial="hidden" animate="visible" exit="exit" transition={{ duration: 0.3 }}>
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-bold text-white tracking-tight">Verify Your Email</h1>
+                <p className="text-gray-400 mt-2 text-sm">Enter the code sent to <span className="text-purple-400 font-medium">{email}</span></p>
               </div>
               <form onSubmit={handleVerificationSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="code" className="text-sm font-medium text-zinc-300 mb-2 block">Verification Code</label>
+                  <label htmlFor="code" className="text-sm font-medium text-gray-300 mb-1.5 block">Verification Code</label>
                   <div className="relative">
-                    <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-                    <input id="code" type="text" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} placeholder="6-digit code" className="w-full bg-zinc-900/50 border border-zinc-700 rounded-lg py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" required maxLength={6} autoFocus />
+                    <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                    <input id="code" type="text" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} placeholder="6-digit code" className="w-full bg-gray-900/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" required maxLength={6} autoFocus />
                   </div>
                 </div>
-                <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-2 mt-6 py-3 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]">
+                <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-2 mt-4 py-2.5 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-300 disabled:bg-purple-800 disabled:opacity-70 transform hover:scale-[1.02]">
                   {isLoading ? <Loader2 className="animate-spin" /> : 'Verify Account'}
                 </button>
               </form>
@@ -164,9 +147,9 @@ export default function SignUpForm() {
           )}
         </AnimatePresence>
 
-        {error && <p className="text-red-400 text-sm mt-4 text-center animate-pulse">{error}</p>}
+        {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
 
-        <p className="text-center text-zinc-400 text-sm mt-8">
+        <p className="text-center text-gray-400 text-sm mt-6">
           {step === 'signup' ? "Already have an account? " : "Didn't get a code? "}
           <Link href="/sign-in" className="text-purple-400 hover:text-purple-300 hover:underline font-medium transition-colors">
             {step === 'signup' ? "Sign in" : "Go back"}

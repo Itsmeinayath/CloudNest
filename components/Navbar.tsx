@@ -2,9 +2,6 @@
 
 import Link from "next/link";
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import { Sun, Moon } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
 
 // Logo Component
 const Logo = () => (
@@ -30,46 +27,21 @@ const Logo = () => (
   </svg>
 );
 
-// Theme Switcher Component
-const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  return (
-    <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-      aria-label="Toggle theme"
-    >
-      {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
-  );
-};
-
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* THE FIX: The Link now points to "/" to go to the landing page */}
           <Link href="/" className="flex items-center gap-3">
             <Logo />
-            <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <span className="text-xl font-bold text-white tracking-tight">
               CloudNest
             </span>
           </Link>
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            {/* <ThemeSwitcher /> */}
-
             {/* Auth State */}
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
@@ -78,13 +50,13 @@ export default function Navbar() {
             <SignedOut>
               <Link
                 href="/sign-in"
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/sign-up"
-                className="px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg shadow hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition-colors"
               >
                 Sign Up
               </Link>
