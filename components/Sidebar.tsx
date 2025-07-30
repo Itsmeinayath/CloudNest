@@ -1,7 +1,8 @@
 "use client";
 
 import { File, Star, Trash2 } from 'lucide-react';
-import FileUploadForm from './FileUploadForm'; // We'll place the form here
+import FileUploadForm from './FileUploadForm';
+import CreateFolderButton from './CreateFolderButton'; // Import the new component
 
 export type TabValue = 'files' | 'starred' | 'trash';
 
@@ -29,14 +30,25 @@ const NavItem = ({ isActive, onClick, children }: { isActive: boolean; onClick: 
 export default function Sidebar({ activeTab, onTabChange, userId, currentFolderId, onUploadSuccess }: SidebarProps) {
   return (
     <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-6">
-      {/* File Upload Section */}
-      <div className="p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload File</h2>
-        <FileUploadForm 
-          userId={userId} 
-          currentFolder={currentFolderId} 
-          onUploadSuccess={onUploadSuccess} 
-        />
+      {/* Actions Section */}
+      <div className="p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload File</h2>
+          <FileUploadForm 
+            userId={userId} 
+            currentFolder={currentFolderId} 
+            onUploadSuccess={onUploadSuccess} 
+          />
+        </div>
+        <div>
+          {/* Add the Create Folder button, only show it in the 'My Files' tab */}
+          {activeTab === 'files' && (
+            <CreateFolderButton 
+              parentId={currentFolderId}
+              onSuccess={onUploadSuccess} // Re-use the same success handler to refresh the list
+            />
+          )}
+        </div>
       </div>
 
       {/* Navigation Section */}

@@ -4,9 +4,7 @@ import { db } from '@/lib/db';
 import { files, NewFile } from '@/lib/db/schema';
 import { and, eq, isNull } from 'drizzle-orm';
 
-/**
- * API route to get files for the authenticated user.
- */
+// GET function remains the same...
 export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
@@ -36,14 +34,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(userFiles);
     
   } catch (error) {
-    // MODIFIED FOR DEBUGGING: This will print the full error to your server console.
     console.error("DETAILED ERROR in GET /api/files:", error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
 
 /**
- * POST function to create a new file record.
+ * POST function now handles both file and folder creation.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -53,30 +50,50 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, parentId, description } = body;
+    const { name, parentId, isFolder, ...fileData } = body;
 
-    const newFile: NewFile = {
-      name,
-      userId,
-      path: name,
-      fileUrl,
-      thumbnailUrl,
-      size,
-      type,
-      mimeType,
-      imageKitFileId,
-      parentId: parentId || null,
-      description: description || null,
-      isFolder: false,
-      isStarred: false,
-      isTrash: false,
-      isShared: false,
-    };
+    let newRecord: NewFile;
 
-    const [insertedFile] = await db.insert(files).values(newFile).returning();
-    return NextResponse.json(insertedFile, { status: 201 });
+    if (isFolder) {
+      // Logic for creating a folder
+      newRecord = {
+        name,
+        userId,
+        isFolder: true,
+        parentId: parentId || null,
+        path: name, // Simple path for now
+        // Set default/null values for file-specific fields
+        size: 0,
+        type: 'folder',
+        isShared: false,
+        isStarred: false,
+        isTrash: false,
+      };
+    } else {
+      // Logic for creating a file (as before)
+      const { fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = fileData;
+      newRecord = {
+        name,
+        userId,
+        path: name,
+        fileUrl,
+        thumbnailUrl,
+        size,
+        type,
+        mimeType,
+        imageKitFileId,
+        parentId: parentId || null,
+        description: description || null,
+        isFolder: false,
+        isStarred: false,
+        isTrash: false,
+        isShared: false,
+      };
+    }
+
+    const [insertedRecord] = await db.insert(files).values(newRecord).returning();
+    return NextResponse.json(insertedRecord, { status: 201 });
   } catch (error) {
-    // MODIFIED FOR DEBUGGING: This will print the full error to your server console.
     console.error("DETAILED ERROR in POST /api/files:", error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
