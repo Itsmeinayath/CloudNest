@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { File as FileType } from '@/lib/db/schema';
-import { MoreVertical, Star, Trash2, Download, Undo, Trash } from 'lucide-react';
+import { MoreVertical, Star, Trash2, Download, Undo, Trash, Info } from 'lucide-react';
 import FileActionButton from './FileActionButton';
 
 type FileActionProps = {
@@ -11,51 +11,37 @@ type FileActionProps = {
   onDelete: (file: FileType) => void;
   onRestore: (file: FileType) => void;
   onDeleteForever: (file: FileType) => void;
+  onViewDetails: (file: FileType) => void; // New prop to open the modal
 };
 
-export default function FileAction({ file, onStar, onDelete, onRestore, onDeleteForever }: FileActionProps) {
+export default function FileAction({ file, onStar, onDelete, onRestore, onDeleteForever, onViewDetails }: FileActionProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleDownload = () => {
-    if (file.fileUrl) {
-      const link = document.createElement('a');
-      link.href = file.fileUrl;
-      link.download = file.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef]);
 
   return (
     <div className="relative" ref={menuRef}>
-      <button
-        // THE FIX: We accept the event 'e' and call e.stopPropagation()
-        onClick={(e) => {
-          e.stopPropagation(); // This stops the click from reaching the parent div
-          setIsOpen(!isOpen);
-        }}
-        className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-      >
+      <button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
         <MoreVertical className="w-5 h-5 text-gray-600 dark:text-gray-300" />
       </button>
 
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
           <ul className="py-1">
+            {/* --- NEW "VIEW DETAILS" BUTTON --- */}
+            <FileActionButton onClick={() => { onViewDetails(file); setIsOpen(false); }}>
+              <Info className="w-4 h-4 mr-3" />
+              View Details
+            </FileActionButton>
+
+            {/* --- CONTEXT-AWARE ACTIONS --- */}
             {file.isTrash ? (
               <>
                 <FileActionButton onClick={() => { onRestore(file); setIsOpen(false); }}>
@@ -78,7 +64,7 @@ export default function FileAction({ file, onStar, onDelete, onRestore, onDelete
                 </FileActionButton>
                 
                 {!file.isFolder && (
-                  <FileActionButton onClick={handleDownload}>
+                  <FileActionButton onClick={() => window.open(file.fileUrl!, '_blank')}>
                     <Download className="w-4 h-4 mr-3" />
                     Download
                   </FileActionButton>

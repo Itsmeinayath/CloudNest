@@ -5,6 +5,7 @@ import FileIcon from "./FileIcon";
 import FileAction from "./FileAction";
 import { Star } from "lucide-react";
 
+// This interface defines all the functions the component needs from its parent.
 interface FileListProps {
   files: FileType[];
   onFolderClick: (folder: FileType) => void;
@@ -12,9 +13,19 @@ interface FileListProps {
   onDelete: (file: FileType) => void;
   onRestore: (file: FileType) => void;
   onDeleteForever: (file: FileType) => void;
+  onViewDetails: (file: FileType) => void; // Add the missing prop here
 }
 
-export default function FileList({ files, onFolderClick, ...actionProps }: FileListProps) {
+export default function FileList({ 
+  files, 
+  onFolderClick, 
+  onStar, 
+  onDelete,
+  onRestore,
+  onDeleteForever,
+  onViewDetails // Destructure the new prop
+}: FileListProps) {
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -36,19 +47,24 @@ export default function FileList({ files, onFolderClick, ...actionProps }: FileL
               if (file.isFolder) onFolderClick(file);
             }}
           >
-            {/* Action menu is always on top */}
             <div className="absolute top-2 right-2 z-20">
-              <FileAction file={file} {...actionProps} />
+              {/* THE FIX: Pass all the props down to the FileAction component */}
+              <FileAction 
+                file={file} 
+                onStar={onStar} 
+                onDelete={onDelete}
+                onRestore={onRestore}
+                onDeleteForever={onDeleteForever}
+                onViewDetails={onViewDetails}
+              />
             </div>
 
-            {/* Star icon is also on top, but below the action menu */}
             {file.isStarred && (
               <div className="absolute top-2 left-2 z-10 p-1 bg-white/80 dark:bg-gray-900/80 rounded-full shadow">
                 <Star className="w-4 h-4 text-yellow-500 fill-current" />
               </div>
             )}
 
-            {/* Main content: either image or icon */}
             <div className="h-32 w-full flex items-center justify-center">
               {isImage && (file.thumbnailUrl || file.fileUrl) ? (
                 <img
@@ -61,7 +77,6 @@ export default function FileList({ files, onFolderClick, ...actionProps }: FileL
               )}
             </div>
 
-            {/* File name and size section */}
             <div className="p-3 border-t border-gray-200 dark:border-gray-700">
               <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                 {file.name}

@@ -5,7 +5,6 @@ import { useAuth } from '@clerk/nextjs';
 import type { File } from '@/lib/db/schema';
 import type { TabValue } from '@/components/Sidebar';
 
-// A custom hook to encapsulate all file browser logic
 export function useFileBrowser() {
   const { isLoaded } = useAuth();
   
@@ -51,102 +50,78 @@ export function useFileBrowser() {
     if (isLoaded) fetchData();
   }, [isLoaded, fetchData]);
 
-  // Abstracted optimistic update handler
-  const optimisticUpdate = async (updateFn: (currentFiles: File[]) => File[], apiCall: () => Promise<any>, successMessage: string) => {
+  // --- ACTION HANDLERS (Now with correct optimistic updates) ---
+  const handleStarFile = async (fileToStar: File) => {
     const originalFiles = [...files];
-    setFiles(currentFiles => updateFn(currentFiles));
+    const newFiles = files.map(f => f.id === fileToStar.id ? { ...f, isStarred: !f.isStarred } : f);
+    setFiles(activeTab === 'starred' ? newFiles.filter(f => f.isStarred) : newFiles);
     try {
-      await apiCall();
-      console.log(successMessage);
-    } catch (error) {
-      console.error("Action failed:", error);
-      setFiles(originalFiles);
-    }
+      await fetch(`/api/files/${fileToStar.id}/star`, { method: 'PATCH' });
+    } catch { setFiles(originalFiles); }
   };
 
-  // --- Event Handlers ---
+  const handleDeleteFile = async (fileToDelete: File) => {
+    const originalFiles = [...files];
+    setFiles(files.filter(f => f.id !== fileToDelete.id));
+    try {
+      await fetch(`/api/files/${fileToDelete.id}/delete`, { method: 'DELETE' });
+    } catch { setFiles(originalFiles); }
+  };
+
+  const handleRestoreFile = async (fileToRestore: File) => {
+    const originalFiles = [...files];
+    setFiles(files.filter(f => f.id !== fileToRestore.id));
+    try {
+      await fetch(`/api/files/${fileToRestore.id}/trash`, { method: 'PATCH' });
+    } catch { setFiles(originalFiles); }
+  };
+
+  const handleDeleteForever = async (fileToDelete: File) => {
+    const originalFiles = [...files];
+    setFiles(files.filter(f => f.id !== fileToDelete.id));
+    try {
+      await fetch(`/api/files/${fileToDelete.id}/trash`, { method: 'DELETE' });
+    } catch { setFiles(originalFiles); }
+  };
+  
+  // Other handlers remain the same...
   const handleTabChange = (tab: TabValue) => {
     setActiveTab(tab);
     setSearchQuery(null);
     setCurrentFolderId(null);
     setFolderPath([{ id: null, name: 'My Files' }]);
   };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setActiveTab('files');
-  };
-
+  const handleSearch = (query: string) => setSearchQuery(query);
   const handleClearSearch = () => setSearchQuery(null);
-
   const handleFolderClick = (folder: File) => {
     if (searchQuery) setSearchQuery(null);
     setFolderPath(prev => [...prev, folder]);
     setCurrentFolderId(folder.id);
   };
-
   const handleBreadcrumbNavigate = (folderId: string | null) => {
     const folderIndex = folderPath.findIndex(f => f.id === folderId);
     if (folderIndex !== -1) setFolderPath(folderPath.slice(0, folderIndex + 1));
     setCurrentFolderId(folderId);
   };
+  const handleEmptyTrash = async () => {
+    const originalFiles = [...files];
+    setFiles([]);
+    try {
+      await fetch('/api/files/empty-trash', { method: 'DELETE' });
+    } catch { setFiles(originalFiles); }
+  };
+  const handleRestoreAll = async () => {
+    const originalFiles = [...files];
+    setFiles([]);
+    try {
+      await fetch('/api/files/restore-all', { method: 'PATCH' });
+    } catch { setFiles(originalFiles); }
+  };
 
-  // --- Action Handlers now use the optimisticUpdate helper ---
-  const handleStarFile = (file: File) => optimisticUpdate(
-    (currentFiles) => currentFiles.map(f => f.id === file.id ? { ...f, isStarred: !f.isStarred } : f).filter(f => activeTab === 'starred' ? f.isStarred : true),
-    () => fetch(`/api/files/${file.id}/star`, { method: 'PATCH' }),
-    'File starred!'
-  );
-
-  const handleDeleteFile = (file: File) => optimisticUpdate(
-    (currentFiles) => currentFiles.filter(f => f.id !== file.id),
-    () => fetch(`/api/files/${file.id}/delete`, { method: 'DELETE' }),
-    'File moved to trash.'
-  );
-
-  const handleRestoreFile = (file: File) => optimisticUpdate(
-    (currentFiles) => currentFiles.filter(f => f.id !== file.id),
-    () => fetch(`/api/files/${file.id}/trash`, { method: 'PATCH' }),
-    'File restored.'
-  );
-
-  const handleDeleteForever = (file: File) => optimisticUpdate(
-    (currentFiles) => currentFiles.filter(f => f.id !== file.id),
-    () => fetch(`/api/files/${file.id}/trash`, { method: 'DELETE' }),
-    'File deleted forever.'
-  );
-
-  const handleEmptyTrash = () => optimisticUpdate(
-    () => [],
-    () => fetch('/api/files/empty-trash', { method: 'DELETE' }),
-    'Trash emptied.'
-  );
-
-  const handleRestoreAll = () => optimisticUpdate(
-    () => [],
-    () => fetch('/api/files/restore-all', { method: 'PATCH' }),
-    'All files restored.'
-  );
-
-  // Return all the state and handlers needed by the UI
   return {
-    files,
-    isLoading: !isLoaded || isLoading,
-    error,
-    activeTab,
-    folderPath,
-    searchQuery,
-    handleTabChange,
-    handleSearch,
-    handleClearSearch,
-    handleFolderClick,
-    handleBreadcrumbNavigate,
-    handleStarFile,
-    handleDeleteFile,
-    handleRestoreFile,
-    handleDeleteForever,
-    handleEmptyTrash,
-    handleRestoreAll,
+    files, isLoading: !isLoaded || isLoading, error, activeTab, folderPath, searchQuery,
+    handleTabChange, handleSearch, handleClearSearch, handleFolderClick, handleBreadcrumbNavigate,
+    handleStarFile, handleDeleteFile, handleRestoreFile, handleDeleteForever, handleEmptyTrash, handleRestoreAll,
     refetch: fetchData,
   };
 }

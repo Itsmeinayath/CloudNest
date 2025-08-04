@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * POST function now handles both file and folder creation.
+ * POST function now correctly saves the mimeType.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -50,28 +50,34 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, parentId, isFolder, ...fileData } = body;
+    
+    // --- DEBUGGING STEP ---
+    // This will show us the exact data being received from the frontend.
+    console.log("Data received in POST /api/files:", body);
+    
+    const { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
 
     let newRecord: NewFile;
 
     if (isFolder) {
-      // Logic for creating a folder
       newRecord = {
         name,
         userId,
         isFolder: true,
         parentId: parentId || null,
-        path: name, // Simple path for now
-        // Set default/null values for file-specific fields
+        path: name,
         size: 0,
         type: 'folder',
         isShared: false,
         isStarred: false,
         isTrash: false,
+        fileUrl: null,
+        thumbnailUrl: null,
+        mimeType: null,
+        imageKitFileId: null,
+        description: null,
       };
     } else {
-      // Logic for creating a file (as before)
-      const { fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = fileData;
       newRecord = {
         name,
         userId,
@@ -80,7 +86,7 @@ export async function POST(req: NextRequest) {
         thumbnailUrl,
         size,
         type,
-        mimeType,
+        mimeType, // This should be correctly saved now
         imageKitFileId,
         parentId: parentId || null,
         description: description || null,
