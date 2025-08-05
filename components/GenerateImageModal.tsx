@@ -54,6 +54,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
     setError(null);
 
     try {
+      // Step 1: Upload the generated base64 image to ImageKit via our secure backend
       const uploadResponse = await fetch('/api/imagekit/upload-generated', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -69,6 +70,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
 
       const imageKitData = await uploadResponse.json();
 
+      // Step 2: Save the new file's metadata to our database
       await fetch('/api/files', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,6 +87,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
         }),
       });
       
+      // Step 3: Close the modal and refresh the file list
       onClose();
       onSuccess();
 
@@ -102,9 +105,9 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg"
+        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg flex flex-col max-h-[90vh]"
       >
-        <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+        <div className="flex-shrink-0 flex items-center justify-between p-4 border-b dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-purple-500" />
             AI Image Generation
@@ -114,7 +117,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
           </button>
         </div>
         
-        <div className="p-6">
+        <div className="p-6 flex-1 overflow-y-auto">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div>
               <label htmlFor="prompt" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
@@ -149,12 +152,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
             )}
             {generatedImage && (
               <div className="space-y-4">
-                {/* THE FIX: Added classes to constrain the image size */}
-                <img 
-                  src={generatedImage} 
-                  alt="AI generated image" 
-                  className="w-full max-h-96 object-contain rounded-lg border dark:border-gray-700 mx-auto" 
-                />
+                <img src={generatedImage} alt="AI generated image" className="w-full object-contain rounded-lg border dark:border-gray-700 mx-auto" />
                 <button
                   onClick={handleSaveToCloudNest}
                   disabled={isSaving}
