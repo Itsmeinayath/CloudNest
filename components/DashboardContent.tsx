@@ -38,7 +38,7 @@ export default function DashboardContent({
   >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   
-  // THE FIX: Add state to manage the details modal
+  // State to manage the details modal
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 

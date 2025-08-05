@@ -1,8 +1,10 @@
 "use client";
 
-import { File, Star, Trash2 } from 'lucide-react';
+import { useState } from 'react'; // Import useState for state management
+import { File, Star, Trash2, Sparkles } from 'lucide-react';
 import FileUploadForm from './FileUploadForm';
-import CreateFolderButton from './CreateFolderButton'; // Import the new component
+import CreateFolderButton from './CreateFolderButton';
+import GenerateImageModal from './GenerateImageModal'; // Import the modal for generating images
 
 export type TabValue = 'files' | 'starred' | 'trash';
 
@@ -28,44 +30,64 @@ const NavItem = ({ isActive, onClick, children }: { isActive: boolean; onClick: 
 );
 
 export default function Sidebar({ activeTab, onTabChange, userId, currentFolderId, onUploadSuccess }: SidebarProps) {
-  return (
-    <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-6">
-      {/* Actions Section */}
-      <div className="p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload File</h2>
-          <FileUploadForm 
-            userId={userId} 
-            currentFolder={currentFolderId} 
-            onUploadSuccess={onUploadSuccess} 
-          />
-        </div>
-        <div>
-          {/* Add the Create Folder button, only show it in the 'My Files' tab */}
-          {activeTab === 'files' && (
-            <CreateFolderButton 
-              parentId={currentFolderId}
-              onSuccess={onUploadSuccess} // Re-use the same success handler to refresh the list
-            />
-          )}
-        </div>
-      </div>
+  // State to control the visibility of the new modal
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
-      {/* Navigation Section */}
-      <nav className="space-y-1">
-        <NavItem isActive={activeTab === 'files'} onClick={() => onTabChange('files')}>
-          <File className="w-5 h-5" />
-          My Files
-        </NavItem>
-        <NavItem isActive={activeTab === 'starred'} onClick={() => onTabChange('starred')}>
-          <Star className="w-5 h-5" />
-          Starred
-        </NavItem>
-        <NavItem isActive={activeTab === 'trash'} onClick={() => onTabChange('trash')}>
-          <Trash2 className="w-5 h-5" />
-          Trash
-        </NavItem>
-      </nav>
-    </aside>
+  return (
+    <>
+      <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-6">
+        {/* Actions Section */}
+        <div className="p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload File</h2>
+            <FileUploadForm 
+              userId={userId} 
+              currentFolder={currentFolderId} 
+              onUploadSuccess={onUploadSuccess} 
+            />
+          </div>
+          <div className="space-y-2">
+            {activeTab === 'files' && (
+              <CreateFolderButton 
+                parentId={currentFolderId}
+                onSuccess={onUploadSuccess}
+              />
+            )}
+            {/* The new "Generate Image" button */}
+            <button
+              onClick={() => setIsGenerateModalOpen(true)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+            >
+              <Sparkles className="w-5 h-5" />
+              Generate Image
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Section */}
+        <nav className="space-y-1">
+          <NavItem isActive={activeTab === 'files'} onClick={() => onTabChange('files')}>
+            <File className="w-5 h-5" />
+            My Files
+          </NavItem>
+          <NavItem isActive={activeTab === 'starred'} onClick={() => onTabChange('starred')}>
+            <Star className="w-5 h-5" />
+            Starred
+          </NavItem>
+          <NavItem isActive={activeTab === 'trash'} onClick={() => onTabChange('trash')}>
+            <Trash2 className="w-5 h-5" />
+            Trash
+          </NavItem>
+        </nav>
+      </aside>
+
+      {/* The Modal is rendered here, but only visible when isGenerateModalOpen is true */}
+      <GenerateImageModal 
+        isOpen={isGenerateModalOpen}
+        onClose={() => setIsGenerateModalOpen(false)}
+        onSuccess={onUploadSuccess}
+        currentFolderId={currentFolderId}
+      />
+    </>
   );
 }
