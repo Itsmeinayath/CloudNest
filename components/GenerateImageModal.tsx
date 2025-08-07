@@ -1,8 +1,8 @@
 "use client";
-import Image from 'next/image';
+
 import { useState } from 'react';
 import { X, Sparkles, Loader2, Save, Image as ImageIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type GenerateImageModalProps = {
   isOpen: boolean;
@@ -40,8 +40,8 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       const data = await response.json();
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
 
-    } catch (err: unknown) {
-      setError('An unexpected error occurred.');
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
