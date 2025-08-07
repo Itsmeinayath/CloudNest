@@ -115,10 +115,10 @@ export async function POST(request: NextRequest) {
             folder: newFolder
         })
 
-    } catch (error) {
+    } catch (err) {
         // 🚨 ERROR HANDLING - Complete this section!
         // If anything goes wrong during the process, log it and send error response
-        console.error("Error creating folder:", error);            // ✅ ADDED: Error logging
+        console.error("Error creating folder:", err);            // ✅ ADDED: Error logging
         return NextResponse.json(                                  // ✅ ADDED: Error response
             { error: "Failed to create folder" },
             { status: 500 } // 500 = Internal Server Error

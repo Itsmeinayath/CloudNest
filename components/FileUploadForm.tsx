@@ -3,9 +3,10 @@
 import { useState, useRef } from 'react';
 import { IKContext, IKUpload } from 'imagekitio-react';
 import { UploadCloud, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
+// import type { UploadResponse } from 'imagekitio-react';
 
 interface FileUploadFormProps {
-  // The 'userId' prop was unused and has been removed to fix the linting error.
+  // 'userId' was unused, so it has been removed.
   currentFolder: string | null;
   onUploadSuccess: () => void;
 }
@@ -47,8 +48,11 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
     setProgress(0);
   };
 
-  const handleUploadProgress = (progressEvent: { loaded: number; total: number; percent: number }) => {
-    setProgress(progressEvent.percent);
+  const handleUploadProgress = (evt: ProgressEvent<XMLHttpRequestEventTarget>) => {
+    if (evt.lengthComputable) {
+      const percent = (evt.loaded / evt.total) * 100;
+      setProgress(percent);
+    }
   };
 
   // CORRECTED: Changed 'any' to 'unknown' for better type safety.
@@ -57,9 +61,14 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
     setError('Upload failed. Please try again.');
     console.error("ImageKit Upload Error:", err);
   };
+  // Use 'any' for the upload response type as 'UploadResponse' does not exist.
 
-  // CORRECTED: Changed 'any' to a more specific object type.
-  const handleSuccess = async (res: Record<string, unknown>) => {
+  const handleSuccess = (res: any) => {
+    // Move async logic to a separate function to avoid returning a Promise from the handler.
+    void processUploadSuccess(res);
+  };
+
+  const processUploadSuccess = async (res: any) => {
     let caption = null;
     if (fileMimeTypeRef.current && fileMimeTypeRef.current.startsWith('image/')) {
         setStatus('generating');
@@ -77,7 +86,6 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
             setError("AI caption failed, but file was saved.");
         }
     }
-
     try {
       await fetch('/api/files', {
         method: 'POST',

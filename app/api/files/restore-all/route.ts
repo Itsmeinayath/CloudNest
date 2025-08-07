@@ -7,7 +7,7 @@ import { and, eq } from 'drizzle-orm';
 /**
  * API route to restore all files from the trash for the authenticated user.
  */
-export async function PATCH(req: Request) {
+export async function PATCH() {
   try {
     const { userId } = await auth();
     if (!userId) {

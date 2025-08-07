@@ -55,8 +55,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ imageBase64 });
 
-  } catch (error) {
-    console.error('[GENERATE_IMAGE_ROUTE]', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
-  }
+  // 🔧 FIX: Replace 'any' with proper type
+} catch (error: unknown) {  // Changed from: } catch (error: any) {
+  console.error("Error generating image:", error);
+  const errorMessage = error instanceof Error ? error.message : "Unknown error";
+  return NextResponse.json({ error: errorMessage }, { status: 500 });
+}
 }

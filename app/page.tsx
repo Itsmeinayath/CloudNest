@@ -2,7 +2,7 @@
 
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import { ArrowRight, Cloud, Lock, Zap, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";

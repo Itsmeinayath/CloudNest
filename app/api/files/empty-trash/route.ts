@@ -9,7 +9,7 @@ import { imagekit } from '@/lib/imagekit';
  * API route to empty the user's trash.
  * This permanently deletes all files marked as `isTrash: true`.
  */
-export async function DELETE(req: Request) {
+export async function DELETE() {
   try {
     // 1. Authenticate the user
     const { userId } = await auth();

@@ -6,8 +6,8 @@ import { and, eq, inArray } from 'drizzle-orm';
 
 // A recursive function to find all descendant IDs of a folder
 async function getAllDescendantIds(folderId: string, userId: string): Promise<string[]> {
-  let idsToDelete: string[] = [folderId];
-  let queue: string[] = [folderId];
+  const idsToDelete: string[] = [folderId];
+  const queue: string[] = [folderId];
 
   while (queue.length > 0) {
     const currentFolderId = queue.shift()!;

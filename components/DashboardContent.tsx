@@ -14,7 +14,7 @@ import FolderNavigation from "./FolderNavigation";
 import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
-import { motion, AnimatePresence } from "framer-motion";
+// import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardContentProps {
   userId: string;
@@ -23,7 +23,7 @@ interface DashboardContentProps {
 
 export default function DashboardContent({
   userId,
-  userName, // 'userName' is now used
+  // userName, // 'userName' is now used
 }: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
