@@ -5,7 +5,7 @@ import { IKContext, IKUpload } from 'imagekitio-react';
 import { UploadCloud, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
 
 interface FileUploadFormProps {
-  userId: string;
+  // The 'userId' prop was unused and has been removed to fix the linting error.
   currentFolder: string | null;
   onUploadSuccess: () => void;
 }
@@ -28,7 +28,7 @@ const authenticator = async () => {
   }
 };
 
-export default function FileUploadForm({ userId, currentFolder, onUploadSuccess }: FileUploadFormProps) {
+export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileUploadFormProps) {
   const [status, setStatus] = useState<'idle' | 'uploading' | 'generating' | 'success' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -47,17 +47,19 @@ export default function FileUploadForm({ userId, currentFolder, onUploadSuccess 
     setProgress(0);
   };
 
-  const handleUploadProgress = (progressEvent: any) => {
-    setProgress(progressEvent.loaded / progressEvent.total * 100);
+  const handleUploadProgress = (progressEvent: { loaded: number; total: number; percent: number }) => {
+    setProgress(progressEvent.percent);
   };
 
-  const handleError = (err: any) => {
+  // CORRECTED: Changed 'any' to 'unknown' for better type safety.
+  const handleError = (err: unknown) => {
     setStatus('error');
     setError('Upload failed. Please try again.');
     console.error("ImageKit Upload Error:", err);
   };
 
-  const handleSuccess = async (res: any) => {
+  // CORRECTED: Changed 'any' to a more specific object type.
+  const handleSuccess = async (res: Record<string, unknown>) => {
     let caption = null;
     if (fileMimeTypeRef.current && fileMimeTypeRef.current.startsWith('image/')) {
         setStatus('generating');
@@ -67,20 +69,12 @@ export default function FileUploadForm({ userId, currentFolder, onUploadSuccess 
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ imageUrl: res.url }),
             });
-            if (!captionResponse.ok) {
-                // THE FIX: Read the text from the response to get our debug message.
-                const errorText = await captionResponse.text();
-                throw new Error(errorText);
-            }
+            if (!captionResponse.ok) throw new Error('Failed to generate AI caption.');
             const data = await captionResponse.json();
             caption = data.caption;
-        } catch (captionError: any) {
+        } catch (captionError) {
             console.error("Caption generation failed:", captionError);
-            // Display the specific error message from our debug API.
-            setError(captionError.message);
-            setStatus('error'); // Show the error state
-            // We stop here because we are debugging.
-            return; 
+            setError("AI caption failed, but file was saved.");
         }
     }
 
@@ -114,42 +108,45 @@ export default function FileUploadForm({ userId, currentFolder, onUploadSuccess 
     }
   };
 
-  const renderStatus = (): React.ReactNode => {
-    // Example status rendering logic (replace with your actual logic)
+  const renderStatus = () => {
     switch (status) {
       case 'uploading':
         return (
-          <div className="flex flex-col items-center">
-            <UploadCloud className="w-8 h-8 text-blue-500 mb-2" />
-            <span>Uploading... {progress.toFixed(0)}%</span>
+          <div className="text-center">
+            <p className="text-sm text-gray-700 dark:text-gray-300">Uploading...</p>
+            <div className="w-32 bg-gray-200 rounded-full h-2.5 dark:bg-gray-600 mt-2 mx-auto">
+              <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{Math.round(progress)}%</p>
           </div>
         );
       case 'generating':
         return (
-          <div className="flex flex-col items-center">
-            <Sparkles className="w-8 h-8 text-purple-500 mb-2" />
-            <span>Generating caption...</span>
+          <div className="text-center text-purple-500 animate-pulse">
+            <Sparkles className="w-10 h-10 mx-auto" />
+            <p className="mt-2 font-semibold">Generating AI Caption...</p>
           </div>
         );
       case 'success':
         return (
-          <div className="flex flex-col items-center">
-            <CheckCircle className="w-8 h-8 text-green-500 mb-2" />
-            <span>Upload successful!</span>
+          <div className="text-center text-green-500">
+            <CheckCircle className="w-10 h-10 mx-auto" />
+            <p className="mt-2 font-semibold">Upload Complete!</p>
           </div>
         );
       case 'error':
         return (
-          <div className="flex flex-col items-center">
-            <AlertTriangle className="w-8 h-8 text-red-500 mb-2" />
-            <span>{error || "An error occurred."}</span>
+          <div className="text-center text-red-500">
+            <AlertTriangle className="w-10 h-10 mx-auto" />
+            <p className="mt-2 font-semibold">{error}</p>
           </div>
         );
       default:
         return (
-          <div className="flex flex-col items-center">
-            <UploadCloud className="w-8 h-8 text-gray-400 mb-2" />
-            <span>Click or drag file to upload</span>
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            <UploadCloud className="w-10 h-10 mx-auto" />
+            <p className="mt-2 text-sm"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+            <p className="text-xs">Any file type, up to 100MB</p>
           </div>
         );
     }
