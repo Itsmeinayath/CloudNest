@@ -95,7 +95,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="container mx-auto"
           >
-            <div className="bg-gray-800/50 border border-gray-700 rounded-xl shadow-2xl shadow-purple-900/10 p-4 hover:scale-[1.01] transition-transform duration-300">
+            {/* <div className="bg-gray-800/50 border border-gray-700 rounded-xl shadow-2xl shadow-purple-900/10 p-4 hover:scale-[1.01] transition-transform duration-300">
               <Image
                 src="/dashboard-preview.png"
                 alt="CloudNest Dashboard Preview"
@@ -104,7 +104,7 @@ export default function HomePage() {
                 className="rounded-lg w-full"
                 priority
               />
-            </div>
+            </div> */}
           </motion.div>
         </section>
 
