@@ -22,13 +22,14 @@ export default function FileDetailsModal({ file, onClose }: FileDetailsModalProp
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg"
+          className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm"
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
         >
           <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">File Details</h3>
@@ -38,10 +39,10 @@ export default function FileDetailsModal({ file, onClose }: FileDetailsModalProp
           </div>
           <div className="p-6 space-y-4">
             {file.thumbnailUrl && (
-              <img src={file.thumbnailUrl} alt={file.name} className="w-full h-48 object-cover rounded-md mb-4 border dark:border-gray-700" />
+              <img src={file.thumbnailUrl} alt={file.name} className="w-full h-40 object-cover rounded-md mb-4 border dark:border-gray-700" />
             )}
             <div>
-              <h4 className="font-bold text-lg text-gray-800 dark:text-gray-200 break-words">{file.name}</h4>
+              <h4 className="font-bold text-base text-gray-800 dark:text-gray-200 break-words">{file.name}</h4>
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2 border-t dark:border-gray-700 pt-4">
               <div className="flex items-center gap-2">
@@ -61,7 +62,7 @@ export default function FileDetailsModal({ file, onClose }: FileDetailsModalProp
               <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <h5 className="font-semibold text-blue-800 dark:text-blue-300">AI Generated Description</h5>
+                  <h5 className="font-semibold text-blue-800 dark:text-blue-300">AI Description</h5>
                 </div>
                 <p className="text-sm text-blue-700 dark:text-blue-200">{file.description}</p>
               </div>

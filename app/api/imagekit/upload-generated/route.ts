@@ -18,7 +18,13 @@ export async function POST(req: Request) {
     const imageKitResponse = await imagekit.upload({
       file: base64Image,
       fileName: fileName,
-      // You can add folder paths or tags here if you wish
+      // THE FIX: Changed the transformation values from strings to numbers
+      transformation: [{
+        height: 200,
+        width: 200,
+        quality: 80,
+        crop: "at_max"
+      }]
     });
 
     // Send the successful response from ImageKit back to the frontend
