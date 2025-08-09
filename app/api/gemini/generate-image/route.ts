@@ -17,7 +17,6 @@ export async function POST(req: Request) {
       contents: [{
         parts: [{ text: prompt }]
       }],
-      // THE FIX: Request both TEXT and IMAGE modalities as required by the model.
       generationConfig: {
         responseModalities: ['TEXT', 'IMAGE']
       },
