@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react"; // Removed unused 'useMemo'
 import { useAuth } from "@clerk/nextjs";
 import type { File } from "@/lib/db/schema";
 import type { TabValue } from "./Sidebar";
@@ -13,8 +13,8 @@ import FileEmptyState from "./FileEmptyState";
 import FolderNavigation from "./FolderNavigation";
 import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
-import FileDetailsModal from "./FileDetailsModal"; // Import the modal
-import { motion, AnimatePresence } from "framer-motion";
+import FileDetailsModal from "./FileDetailsModal";
+import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 interface DashboardContentProps {
   userId: string;
@@ -37,10 +37,7 @@ export default function DashboardContent({
     (File | { id: null; name: "My Files" })[]
   >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
-  
-  // State to manage the details modal
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -64,8 +61,12 @@ export default function DashboardContent({
 
       const data = await response.json();
       setFiles(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) { // Changed 'any' to 'unknown'
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -103,59 +104,24 @@ export default function DashboardContent({
     }
     setCurrentFolderId(folderId);
   };
-
-  const handleStarFile = async (file: File) => {
-    await fetch(`/api/files/${file.id}/star`, { method: "PATCH" });
-    fetchData();
-  };
-
-  const handleDeleteFile = async (file: File) => {
-    await fetch(`/api/files/${file.id}/delete`, { method: "DELETE" });
-    fetchData();
-  };
-
-  const handleRestoreFile = async (file: File) => {
-    await fetch(`/api/files/${file.id}/trash`, { method: "PATCH" });
-    fetchData();
-  };
   
-  const handleDeleteForever = async (file: File) => {
-    await fetch(`/api/files/${file.id}/trash`, { method: "DELETE" });
-    fetchData();
-  };
-
-  const handleEmptyTrash = async () => {
-    await fetch('/api/files/empty-trash', { method: 'DELETE' });
-    fetchData();
-  };
-  
-  const handleRestoreAll = async () => {
-    await fetch('/api/files/restore-all', { method: 'PATCH' });
+  const handleFileAction = () => {
     fetchData();
   };
 
   const renderContent = () => {
     if (!isLoaded || isLoading) return <FileLoadingState />;
-    if (error)
-      return (
-        <div className="text-center text-red-500 p-8">
-          Error: {error}{" "}
-          <button onClick={fetchData} className="text-blue-400 underline ml-2 hover:text-blue-300">
-            Retry
-          </button>
-        </div>
-      );
+    if (error) return <div className="text-center text-red-500 p-8">Error: {error}</div>;
     if (files.length === 0) return <FileEmptyState isSearch={!!searchQuery} />;
-
     return (
       <FileList
         files={files}
-        onStar={handleStarFile}
-        onDelete={handleDeleteFile}
+        onStar={handleFileAction}
+        onDelete={handleFileAction}
         onFolderClick={handleFolderClick}
-        onRestore={handleRestoreFile}
-        onDeleteForever={handleDeleteForever}
-        onViewDetails={setSelectedFile} // Pass the state setter function
+        onRestore={handleFileAction}
+        onDeleteForever={handleFileAction}
+        onViewDetails={setSelectedFile}
       />
     );
   };
@@ -173,7 +139,7 @@ export default function DashboardContent({
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {searchQuery ? `Search Results` : 
+              {searchQuery ? `Search Results for "${searchQuery}"` : 
                activeTab === 'starred' ? 'Starred' : 
                activeTab === 'trash' ? 'Trash' : 
                'My Files'}
@@ -188,12 +154,10 @@ export default function DashboardContent({
           </div>
 
           {activeTab === "files" && !searchQuery && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-              <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
-            </motion.div>
+            <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
           )}
           
-          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleEmptyTrash} onRestoreAll={handleRestoreAll} />}
+          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleFileAction} onRestoreAll={handleFileAction} />}
 
           <div className="mt-4 p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
             <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
@@ -201,7 +165,6 @@ export default function DashboardContent({
         </div>
       </div>
 
-      {/* Conditionally render the modal outside the main layout */}
       <AnimatePresence>
         {selectedFile && (
           <FileDetailsModal 
