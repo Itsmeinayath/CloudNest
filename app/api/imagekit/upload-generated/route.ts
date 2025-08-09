@@ -18,8 +18,7 @@ export async function POST(req: Request) {
     const imageKitResponse = await imagekit.upload({
       file: base64Image,
       fileName: fileName,
-      // THE FIX: The problematic 'transformation' prop has been removed.
-      // We will now rely on the default thumbnail settings in your ImageKit dashboard.
+      // You can add folder paths or tags here if you wish
     });
 
     // Send the successful response from ImageKit back to the frontend
