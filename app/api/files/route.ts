@@ -35,12 +35,12 @@ export async function GET(req: NextRequest) {
     
   } catch (error) {
     console.error("DETAILED ERROR in GET /api/files:", error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Internal ServerError', { status: 500 });
   }
 }
 
 /**
- * POST function now correctly saves the mimeType.
+ * POST function now correctly handles the mimeType.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -51,11 +51,15 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     
-    // --- DEBUGGING STEP ---
-    // This will show us the exact data being received from the frontend.
-    console.log("Data received in POST /api/files:", body);
-    
-    const { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+    // THE FIX: Use a let for name so we can provide a fallback
+    let { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+
+    // If the name is missing (especially for AI generated images), create a fallback name.
+    if (!name && description) {
+      name = description.substring(0, 30).replace(/\s/g, '_') + '.png';
+    } else if (!name) {
+      name = `file_${Date.now()}`; // A generic fallback if all else fails
+    }
 
     let newRecord: NewFile;
 
@@ -86,7 +90,7 @@ export async function POST(req: NextRequest) {
         thumbnailUrl,
         size,
         type,
-        mimeType, // This should be correctly saved now
+        mimeType,
         imageKitFileId,
         parentId: parentId || null,
         description: description || null,

@@ -13,14 +13,15 @@ export async function POST(req: Request) {
       return new NextResponse('Image URL is required', { status: 400 });
     }
     
+    // 1. Fetch the image data from the URL
     const imageResponse = await fetch(imageUrl);
     if (!imageResponse.ok) {
-        console.error(`Failed to fetch image from URL: ${imageUrl}, Status: ${imageResponse.status}`);
         return new NextResponse('Failed to fetch image data', { status: 500 });
     }
     const imageBuffer = await imageResponse.arrayBuffer();
     const base64ImageData = Buffer.from(imageBuffer).toString('base64');
 
+    // 2. Prepare the payload for the Gemini API
     const payload = {
       contents: [
         {
@@ -42,9 +43,11 @@ export async function POST(req: Request) {
       return new NextResponse('Gemini API key is not configured', { status: 500 });
     }
 
+    // 3. Use the correct model and API endpoint
     const modelName = "gemini-1.5-flash-latest";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
+    // 4. Call the Gemini API
     const geminiResponse = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -59,6 +62,7 @@ export async function POST(req: Request) {
 
     const result = await geminiResponse.json();
     
+    // 5. Extract and return the caption
     const caption = result.candidates?.[0]?.content?.parts?.[0]?.text || "No caption generated.";
 
     return NextResponse.json({ caption });

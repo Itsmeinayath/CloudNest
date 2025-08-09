@@ -3,10 +3,8 @@
 import { useState, useRef } from 'react';
 import { IKContext, IKUpload } from 'imagekitio-react';
 import { UploadCloud, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
-// import type { UploadResponse } from 'imagekitio-react';
 
 interface FileUploadFormProps {
-  // 'userId' was unused, so it has been removed.
   currentFolder: string | null;
   onUploadSuccess: () => void;
 }
@@ -48,44 +46,43 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
     setProgress(0);
   };
 
-  const handleUploadProgress = (evt: ProgressEvent<XMLHttpRequestEventTarget>) => {
-    if (evt.lengthComputable) {
+  const handleUploadProgress = (evt: ProgressEvent) => {
+     if (evt.lengthComputable) {
       const percent = (evt.loaded / evt.total) * 100;
       setProgress(percent);
     }
   };
 
-  // CORRECTED: Changed 'any' to 'unknown' for better type safety.
   const handleError = (err: unknown) => {
     setStatus('error');
     setError('Upload failed. Please try again.');
     console.error("ImageKit Upload Error:", err);
   };
-  // Use 'any' for the upload response type as 'UploadResponse' does not exist.
 
-  const handleSuccess = (res: any) => {
-    // Move async logic to a separate function to avoid returning a Promise from the handler.
-    void processUploadSuccess(res);
-  };
-
-  const processUploadSuccess = async (res: any) => {
+  const handleSuccess = async (res: Record<string, any>) => {
+    setStatus('generating');
     let caption = null;
+
+    // THE FIX: Re-added the AI caption generation logic
     if (fileMimeTypeRef.current && fileMimeTypeRef.current.startsWith('image/')) {
-        setStatus('generating');
-        try {
-            const captionResponse = await fetch('/api/gemini/generate-caption', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageUrl: res.url }),
-            });
-            if (!captionResponse.ok) throw new Error('Failed to generate AI caption.');
-            const data = await captionResponse.json();
-            caption = data.caption;
-        } catch (captionError) {
-            console.error("Caption generation failed:", captionError);
-            setError("AI caption failed, but file was saved.");
+      try {
+        const captionResponse = await fetch('/api/gemini/generate-caption', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl: res.url }),
+        });
+        if (!captionResponse.ok) {
+          throw new Error('Failed to generate AI caption.');
         }
+        const data = await captionResponse.json();
+        caption = data.caption;
+      } catch (captionError) {
+        console.error("Caption generation failed:", captionError);
+        // Don't block the upload, just proceed without a caption
+        setError("AI caption failed, but file was saved.");
+      }
     }
+
     try {
       await fetch('/api/files', {
         method: 'POST',
@@ -99,7 +96,7 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
           mimeType: fileMimeTypeRef.current,
           imageKitFileId: res.fileId,
           parentId: currentFolder,
-          description: caption,
+          description: caption, // Send the caption to the backend
         }),
       });
       
@@ -118,46 +115,17 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
 
   const renderStatus = () => {
     switch (status) {
-      case 'uploading':
-        return (
-          <div className="text-center">
-            <p className="text-sm text-gray-700 dark:text-gray-300">Uploading...</p>
-            <div className="w-32 bg-gray-200 rounded-full h-2.5 dark:bg-gray-600 mt-2 mx-auto">
-              <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{Math.round(progress)}%</p>
-          </div>
-        );
-      case 'generating':
-        return (
-          <div className="text-center text-purple-500 animate-pulse">
-            <Sparkles className="w-10 h-10 mx-auto" />
-            <p className="mt-2 font-semibold">Generating AI Caption...</p>
-          </div>
-        );
-      case 'success':
-        return (
-          <div className="text-center text-green-500">
-            <CheckCircle className="w-10 h-10 mx-auto" />
-            <p className="mt-2 font-semibold">Upload Complete!</p>
-          </div>
-        );
-      case 'error':
-        return (
-          <div className="text-center text-red-500">
-            <AlertTriangle className="w-10 h-10 mx-auto" />
-            <p className="mt-2 font-semibold">{error}</p>
-          </div>
-        );
-      default:
-        return (
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            <UploadCloud className="w-10 h-10 mx-auto" />
-            <p className="mt-2 text-sm"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-            <p className="text-xs">Any file type, up to 100MB</p>
-          </div>
-        );
-    }
+        case 'uploading':
+          return <div className="text-center">Uploading... {Math.round(progress)}%</div>;
+        case 'generating':
+          return <div className="text-center text-purple-500 animate-pulse"><Sparkles className="w-10 h-10 mx-auto" /><p className="mt-2 font-semibold">Generating Caption...</p></div>;
+        case 'success':
+          return <div className="text-center text-green-500"><CheckCircle className="w-10 h-10 mx-auto" /><p className="mt-2 font-semibold">Success!</p></div>;
+        case 'error':
+          return <div className="text-center text-red-500"><AlertTriangle className="w-10 h-10 mx-auto" /><p className="mt-2 font-semibold">{error}</p></div>;
+        default:
+          return <div className="text-center text-gray-500 dark:text-gray-400"><UploadCloud className="w-10 h-10 mx-auto" /><p className="mt-2 text-sm"><span className="font-semibold">Click to upload</span> or drag and drop</p></div>;
+      }
   };
 
   return (

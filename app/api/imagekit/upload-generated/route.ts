@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { imagekit } from '@/lib/imagekit'; // Use our shared server-side client
+import { imagekit } from '@/lib/imagekit'; // Your configured server-side ImageKit client
 
 export async function POST(req: Request) {
   try {
@@ -14,21 +14,31 @@ export async function POST(req: Request) {
       return new NextResponse('Image data and file name are required', { status: 400 });
     }
 
-    // Use the server-side ImageKit SDK to securely upload the base64 string
-    const imageKitResponse = await imagekit.upload({
+    // Upload image to ImageKit (no transformation here)
+    const uploadResponse = await imagekit.upload({
       file: base64Image,
       fileName: fileName,
-      // THE FIX: Changed the transformation values from strings to numbers
-      transformation: [{
-        height: 200,
-        width: 200,
-        quality: 80,
-        crop: "at_max"
-      }]
     });
 
-    // Send the successful response from ImageKit back to the frontend
-    return NextResponse.json(imageKitResponse);
+    // Create transformed URL using ImageKit's URL endpoint
+    const transformedUrl = imagekit.url({
+      src: uploadResponse.url,
+      transformation: [
+        {
+          height: 200,
+          width: 200,
+          quality: 80,
+          crop: 'at_max',
+        },
+      ],
+    });
+
+    // Send both original and transformed URLs to frontend
+    return NextResponse.json({
+      originalUrl: uploadResponse.url,
+      transformedUrl,
+      fileId: uploadResponse.fileId,
+    });
 
   } catch (error) {
     console.error('[UPLOAD_GENERATED_IMAGE_ROUTE]', error);
