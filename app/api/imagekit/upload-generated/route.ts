@@ -18,13 +18,8 @@ export async function POST(req: Request) {
     const imageKitResponse = await imagekit.upload({
       file: base64Image,
       fileName: fileName,
-      // THE FIX: Add a transformation to generate a thumbnail
-      transformation: [{
-        height: 200,
-        width: 200,
-        quality: 80,
-        crop: "at_max"
-      }]
+      // THE FIX: The problematic 'transformation' prop has been removed.
+      // We will now rely on the default thumbnail settings in your ImageKit dashboard.
     });
 
     // Send the successful response from ImageKit back to the frontend
