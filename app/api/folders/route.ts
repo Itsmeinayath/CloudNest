@@ -5,7 +5,7 @@
 import { db } from "@/lib/db";                            // Database connection - your data storage
 import { files } from "@/lib/db/schema";                  // Database table schema for files and folders
 import { auth } from "@clerk/nextjs/server";              // Clerk authentication - verify user identity
-import { error } from "console";                          // ❌ UNUSED IMPORT - can be removed
+
 
 import { eq, and } from "drizzle-orm"                     // Drizzle ORM query operators for SQL conditions
 import { NextRequest, NextResponse } from "next/server";  // Next.js API route types

@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     const result = await response.json();
 
-    const imagePart = result.candidates?.[0]?.content?.parts?.find((part: any) => part.inlineData);
+    const imagePart = result.candidates?.[0]?.content?.parts?.find((part: { inlineData?: { data?: string } }) => part.inlineData);
     const imageBase64 = imagePart?.inlineData?.data;
 
     if (!imageBase64) {

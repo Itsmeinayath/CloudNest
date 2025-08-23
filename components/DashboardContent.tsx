@@ -18,13 +18,14 @@ import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 interface DashboardContentProps {
   userId: string;
-  userName: string;
 }
 
 export default function DashboardContent({
   userId,
-  userName,
 }: DashboardContentProps) {
+  // Suppress unused parameter warning - userId might be needed for future features
+  void userId;
+  
   const { isLoaded } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -132,9 +133,9 @@ export default function DashboardContent({
         <Sidebar
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          userId={userId}
           currentFolderId={currentFolderId}
           onUploadSuccess={fetchData}
+          onGenerateImageClick={() => {}} // Placeholder function
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
@@ -148,7 +149,6 @@ export default function DashboardContent({
               <SearchBar
                 onSearch={handleSearch}
                 onClear={handleClearSearch}
-                isSearching={isLoading}
               />
             </div>
           </div>
