@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { X, Sparkles, Loader2, Save, Image as ImageIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 type GenerateImageModalProps = {
   isOpen: boolean;
