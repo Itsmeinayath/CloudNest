@@ -172,7 +172,7 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
             </div>
             <IKUpload
               id="file-upload"
-              fileName={(file) => `${Date.now()}-${file.name}`}
+              fileName={(file: File) => `${Date.now()}-${file.name}`}
               folder={`/cloudnest/${currentFolder || 'root'}`}
               useUniqueFileName={true}
               isPrivateFile={false}

@@ -19,12 +19,10 @@ import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 interface DashboardContentProps {
   userId: string;
-  userName: string;
 }
 
 export default function DashboardContent({
   userId,
-  userName,
 }: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
