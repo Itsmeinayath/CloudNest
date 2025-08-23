@@ -16,15 +16,7 @@ import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
 import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
-interface DashboardContentProps {
-  userId: string;
-  userName: string;
-}
-
-export default function DashboardContent({
-  userId,
-  userName,
-}: DashboardContentProps) {
+export default function DashboardContent() {
   const { isLoaded } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -132,9 +124,9 @@ export default function DashboardContent({
         <Sidebar
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          userId={userId}
           currentFolderId={currentFolderId}
           onUploadSuccess={fetchData}
+          onGenerateImageClick={() => setIsImageModalOpen(true)}
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
@@ -148,7 +140,6 @@ export default function DashboardContent({
               <SearchBar
                 onSearch={handleSearch}
                 onClear={handleClearSearch}
-                isSearching={isLoading}
               />
             </div>
           </div>

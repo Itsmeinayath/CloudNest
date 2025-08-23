@@ -41,8 +41,8 @@ export default function CreateFolderButton({ parentId, onSuccess }: CreateFolder
       setFolderName('');
       onSuccess(); // Refresh the file list in the parent component
 
-    } catch (err: any) {
-      setError(err.message || 'An error occurred.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'An error occurred.');
     } finally {
       setIsLoading(false);
     }

@@ -22,10 +22,7 @@ export default async function DashboardPage() {
       {/* The main content area of the dashboard. */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* We pass the user's ID and name down to the DashboardContent client component. */}
-        <DashboardContent 
-          userId={user.id} 
-          userName={user.firstName || user.emailAddresses[0].emailAddress} 
-        />
+        <DashboardContent />
       </main>
     </div>
   );
