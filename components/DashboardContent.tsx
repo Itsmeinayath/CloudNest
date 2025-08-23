@@ -14,16 +14,15 @@ import FolderNavigation from "./FolderNavigation";
 import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
+import GenerateImageModal from "./GenerateImageModal";
 import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 interface DashboardContentProps {
   userId: string;
-  userName: string;
 }
 
 export default function DashboardContent({
   userId,
-  userName,
 }: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
@@ -38,6 +37,7 @@ export default function DashboardContent({
   >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isGenerateImageModalOpen, setIsGenerateImageModalOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -105,8 +105,82 @@ export default function DashboardContent({
     setCurrentFolderId(folderId);
   };
   
-  const handleFileAction = () => {
-    fetchData();
+  const handleStar = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/star`, {
+        method: 'PATCH',
+      });
+      if (!response.ok) throw new Error('Failed to toggle star');
+      fetchData();
+    } catch (error) {
+      console.error('Error toggling star:', error);
+      setError('Failed to toggle star');
+    }
+  };
+
+  const handleDelete = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/delete`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete file');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      setError('Failed to delete file');
+    }
+  };
+
+  const handleRestore = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/trash`, {
+        method: 'PATCH',
+      });
+      if (!response.ok) throw new Error('Failed to restore file');
+      fetchData();
+    } catch (error) {
+      console.error('Error restoring file:', error);
+      setError('Failed to restore file');
+    }
+  };
+
+  const handleDeleteForever = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/trash`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to permanently delete file');
+      fetchData();
+    } catch (error) {
+      console.error('Error permanently deleting file:', error);
+      setError('Failed to permanently delete file');
+    }
+  };
+
+  const handleEmptyTrash = async () => {
+    try {
+      const response = await fetch('/api/files/empty-trash', {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to empty trash');
+      fetchData();
+    } catch (error) {
+      console.error('Error emptying trash:', error);
+      setError('Failed to empty trash');
+    }
+  };
+
+  const handleRestoreAll = async () => {
+    try {
+      const response = await fetch('/api/files/restore-all', {
+        method: 'PATCH',
+      });
+      if (!response.ok) throw new Error('Failed to restore all files');
+      fetchData();
+    } catch (error) {
+      console.error('Error restoring all files:', error);
+      setError('Failed to restore all files');
+    }
   };
 
   const renderContent = () => {
@@ -116,11 +190,11 @@ export default function DashboardContent({
     return (
       <FileList
         files={files}
-        onStar={handleFileAction}
-        onDelete={handleFileAction}
+        onStar={handleStar}
+        onDelete={handleDelete}
         onFolderClick={handleFolderClick}
-        onRestore={handleFileAction}
-        onDeleteForever={handleFileAction}
+        onRestore={handleRestore}
+        onDeleteForever={handleDeleteForever}
         onViewDetails={setSelectedFile}
       />
     );
@@ -135,6 +209,7 @@ export default function DashboardContent({
           userId={userId}
           currentFolderId={currentFolderId}
           onUploadSuccess={fetchData}
+          onGenerateImageClick={() => setIsGenerateImageModalOpen(true)}
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
@@ -157,7 +232,7 @@ export default function DashboardContent({
             <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
           )}
           
-          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleFileAction} onRestoreAll={handleFileAction} />}
+          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleEmptyTrash} onRestoreAll={handleRestoreAll} />}
 
           <div className="mt-4 p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
             <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
@@ -173,6 +248,13 @@ export default function DashboardContent({
           />
         )}
       </AnimatePresence>
+
+      <GenerateImageModal
+        isOpen={isGenerateImageModalOpen}
+        onClose={() => setIsGenerateImageModalOpen(false)}
+        onSuccess={fetchData}
+        currentFolderId={currentFolderId}
+      />
     </>
   );
 }
