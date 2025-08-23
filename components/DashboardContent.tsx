@@ -105,8 +105,69 @@ export default function DashboardContent({
     setCurrentFolderId(folderId);
   };
   
-  const handleFileAction = () => {
-    fetchData();
+  const handleEmptyTrash = async () => {
+    try {
+      const response = await fetch('/api/files/empty-trash', { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to empty trash');
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error emptying trash:', error);
+      setError('Failed to empty trash');
+    }
+  };
+
+  const handleRestoreAll = async () => {
+    try {
+      const response = await fetch('/api/files/restore-all', { method: 'PATCH' });
+      if (!response.ok) {
+        throw new Error('Failed to restore all files');
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error restoring all files:', error);
+      setError('Failed to restore all files');
+    }
+  };
+
+  const handleDeleteFile = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/delete`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to move file to trash');
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error moving file to trash:', error);
+      setError('Failed to move file to trash');
+    }
+  };
+
+  const handleRestoreFile = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/trash`, { method: 'PATCH' });
+      if (!response.ok) {
+        throw new Error('Failed to restore file');
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error restoring file:', error);
+      setError('Failed to restore file');
+    }
+  };
+
+  const handleDeleteForever = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/trash`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to permanently delete file');
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error permanently deleting file:', error);
+      setError('Failed to permanently delete file');
+    }
   };
 
   const handleStarFile = async (file: File) => {
@@ -135,10 +196,10 @@ export default function DashboardContent({
       <FileList
         files={files}
         onStar={handleStarFile}
-        onDelete={handleFileAction}
+        onDelete={handleDeleteFile}
         onFolderClick={handleFolderClick}
-        onRestore={handleFileAction}
-        onDeleteForever={handleFileAction}
+        onRestore={handleRestoreFile}
+        onDeleteForever={handleDeleteForever}
         onViewDetails={setSelectedFile}
       />
     );
@@ -174,7 +235,7 @@ export default function DashboardContent({
             <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
           )}
           
-          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleFileAction} onRestoreAll={handleFileAction} />}
+          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleEmptyTrash} onRestoreAll={handleRestoreAll} />}
 
           <div className="mt-4 p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
             <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>

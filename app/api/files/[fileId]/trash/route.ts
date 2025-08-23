@@ -41,13 +41,14 @@ export async function PATCH(
             .set({
                 isTrash: false,
                 trashedAt: null,
-            }).where(
+            })
+            .where(
                 and(
                     eq(files.id, fileId),
                     eq(files.userId, userId)
                 )
-            )
-        // 6. returm a success response
+            );
+        // 6. return a success response
         return NextResponse.json({ message: "File restored successfully" }, { status: 200 });
 
     } catch (error) {

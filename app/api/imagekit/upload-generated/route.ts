@@ -18,7 +18,10 @@ export async function POST(req: Request) {
     const imageKitResponse = await imagekit.upload({
       file: base64Image,
       fileName: fileName,
-      // You can add folder paths or tags here if you wish
+      folder: `/cloudnest/${userId}/ai-generated`, // Organize AI-generated images in a specific folder
+      useUniqueFileName: false, // Use the provided fileName as-is since it's already unique
+      isPrivateFile: false, // Make sure images are publicly accessible for thumbnails
+      // Note: ImageKit automatically generates thumbnailUrl for supported image formats
     });
 
     // Send the successful response from ImageKit back to the frontend
