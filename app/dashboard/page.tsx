@@ -24,7 +24,6 @@ export default async function DashboardPage() {
         {/* We pass the user's ID and name down to the DashboardContent client component. */}
         <DashboardContent 
           userId={user.id} 
-          userName={user.firstName || user.emailAddresses[0].emailAddress} 
         />
       </main>
     </div>
