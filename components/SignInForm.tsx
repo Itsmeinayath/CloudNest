@@ -31,8 +31,9 @@ export default function SignInForm() {
         redirectUrl: '/sso-callback',
         redirectUrlComplete: '/dashboard',
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred with Google Sign-In.');
+    } catch (err: unknown) {
+      const error = err as { errors?: Array<{ message?: string }> };
+      setError(error.errors?.[0]?.message || 'An error occurred with Google Sign-In.');
     }
   };
 
@@ -59,8 +60,9 @@ export default function SignInForm() {
         setError("Could not find a sign-in method for this account.");
       }
 
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred. Please check your email.');
+    } catch (err: unknown) {
+      const error = err as { errors?: Array<{ message?: string }> };
+      setError(error.errors?.[0]?.message || 'An error occurred. Please check your email.');
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +80,9 @@ export default function SignInForm() {
         await setActive({ session: result.createdSessionId });
         router.push('/dashboard');
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Invalid password. Please try again.');
+    } catch (err: unknown) {
+      const error = err as { errors?: Array<{ message?: string }> };
+      setError(error.errors?.[0]?.message || 'Invalid password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -145,7 +148,7 @@ export default function SignInForm() {
         {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
 
         <p className="text-center text-gray-400 text-sm mt-6">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/sign-up" className="text-purple-400 hover:text-purple-300 hover:underline font-medium transition-colors">
             Sign up
           </Link>

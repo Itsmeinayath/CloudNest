@@ -21,10 +21,7 @@ interface DashboardContentProps {
   userName: string;
 }
 
-export default function DashboardContent({
-  userId,
-  userName,
-}: DashboardContentProps) {
+export default function DashboardContent({}: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -132,9 +129,9 @@ export default function DashboardContent({
         <Sidebar
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          userId={userId}
           currentFolderId={currentFolderId}
           onUploadSuccess={fetchData}
+          onGenerateImageClick={() => {/* TODO: implement */}}
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">

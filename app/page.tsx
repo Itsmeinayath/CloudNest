@@ -164,7 +164,7 @@ export default function HomePage() {
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-2 mx-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:opacity-90 transition-colors duration-300"
                 >
-                  Let's Go <ArrowRight className="h-5 w-5" />
+                  Let&apos;s Go <ArrowRight className="h-5 w-5" />
                 </motion.button>
               </Link>
             </SignedOut>
