@@ -40,8 +40,8 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       const data = await response.json();
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
 
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -91,8 +91,8 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       onClose();
       onSuccess();
 
-    } catch (err: any) {
-        setError(err.message || "Failed to save the image.");
+    } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to save the image.");
     } finally {
         setIsSaving(false);
     }

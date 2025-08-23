@@ -7,6 +7,11 @@ import Link from 'next/link';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+// Type for Clerk errors
+type ClerkError = {
+  errors?: Array<{ message: string }>;
+};
+
 const GoogleIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M21.35 11.1H12.18V13.83H18.68C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5.03 16.25 5.03 12.55C5.03 8.85 8.36 5.83 12.19 5.83C14.29 5.83 15.99 6.69 17.29 7.84L19.38 5.83C17.38 3.99 15.08 3 12.19 3C7.03 3 3 7.54 3 12.55C3 17.56 7.03 22.1 12.19 22.1C17.64 22.1 21.55 18.27 21.55 12.81C21.55 12.21 21.48 11.65 21.35 11.1Z" fill="#FFFFFF"/>
@@ -31,8 +36,9 @@ export default function SignInForm() {
         redirectUrl: '/sso-callback',
         redirectUrlComplete: '/dashboard',
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred with Google Sign-In.');
+    } catch (err: unknown) {
+      const clerkErr = err as ClerkError;
+      setError(clerkErr.errors?.[0]?.message || 'An error occurred with Google Sign-In.');
     }
   };
 
@@ -59,8 +65,9 @@ export default function SignInForm() {
         setError("Could not find a sign-in method for this account.");
       }
 
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred. Please check your email.');
+    } catch (err: unknown) {
+      const clerkErr = err as ClerkError;
+      setError(clerkErr.errors?.[0]?.message || 'An error occurred. Please check your email.');
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +85,9 @@ export default function SignInForm() {
         await setActive({ session: result.createdSessionId });
         router.push('/dashboard');
       }
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Invalid password. Please try again.');
+    } catch (err: unknown) {
+      const clerkErr = err as ClerkError;
+      setError(clerkErr.errors?.[0]?.message || 'Invalid password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -145,7 +153,7 @@ export default function SignInForm() {
         {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
 
         <p className="text-center text-gray-400 text-sm mt-6">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/sign-up" className="text-purple-400 hover:text-purple-300 hover:underline font-medium transition-colors">
             Sign up
           </Link>

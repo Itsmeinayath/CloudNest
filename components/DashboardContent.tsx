@@ -23,6 +23,9 @@ interface DashboardContentProps {
 export default function DashboardContent({
   userId,
 }: DashboardContentProps) {
+  // Suppress unused parameter warning - userId might be needed for future features
+  void userId;
+  
   const { isLoaded } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
