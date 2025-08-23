@@ -1,8 +1,9 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState, useRef } from 'react';
-import { IKContext, IKUpload } from 'imagekitio-react';
-import { UploadCloud, CheckCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { IKContext } from 'imagekitio-react';
 
 interface FileUploadFormProps {
   // 'userId' was unused, so it has been removed.

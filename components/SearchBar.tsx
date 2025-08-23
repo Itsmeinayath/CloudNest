@@ -9,7 +9,7 @@ type SearchBarProps = {
   isSearching: boolean;
 };
 
-export default function SearchBar({ onSearch, onClear, isSearching }: SearchBarProps) {
+export default function SearchBar({ onSearch, onClear }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
   const handleFormSubmit = (e: React.FormEvent) => {

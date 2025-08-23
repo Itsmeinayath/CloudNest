@@ -9,7 +9,6 @@ export type TabValue = 'files' | 'starred' | 'trash';
 type SidebarProps = {
   activeTab: TabValue;
   onTabChange: (tab: TabValue) => void;
-  userId: string;
   currentFolderId: string | null;
   onUploadSuccess: () => void;
   onGenerateImageClick: () => void; // New prop to open the modal
@@ -28,7 +27,7 @@ const NavItem = ({ isActive, onClick, children }: { isActive: boolean; onClick: 
   </button>
 );
 
-export default function Sidebar({ activeTab, onTabChange, userId, currentFolderId, onUploadSuccess, onGenerateImageClick }: SidebarProps) {
+export default function Sidebar({ activeTab, onTabChange, currentFolderId, onUploadSuccess, onGenerateImageClick }: SidebarProps) {
   return (
     <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-6">
       {/* Actions Section */}

@@ -52,7 +52,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     
     // THE FIX: Use a let for name so we can provide a fallback
-    let { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+    let { name } = body;
+    const { parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
 
     // If the name is missing (especially for AI generated images), create a fallback name.
     if (!name && description) {

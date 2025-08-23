@@ -30,7 +30,7 @@ async function getAllDescendantIds(folderId: string, userId: string): Promise<st
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { fileId: string } }
+  props: { params: Promise<{ fileId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -38,7 +38,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { fileId } = params;
+    const { fileId } = await props.params;
     if (!fileId) {
       return new NextResponse('File ID is required', { status: 400 });
     }
