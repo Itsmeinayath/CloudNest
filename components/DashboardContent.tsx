@@ -14,6 +14,7 @@ import FolderNavigation from "./FolderNavigation";
 import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
+import GenerateImageModal from "./GenerateImageModal";
 import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 interface DashboardContentProps {
@@ -23,7 +24,6 @@ interface DashboardContentProps {
 
 export default function DashboardContent({
   userId,
-  userName,
 }: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
@@ -38,6 +38,7 @@ export default function DashboardContent({
   >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isGenerateImageModalOpen, setIsGenerateImageModalOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -109,6 +110,24 @@ export default function DashboardContent({
     fetchData();
   };
 
+  const handleStarFile = async (file: File) => {
+    try {
+      const response = await fetch(`/api/files/${file.id}/star`, {
+        method: 'PATCH',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to star/unstar file');
+      }
+      
+      // Refresh the data to reflect the change
+      fetchData();
+    } catch (error) {
+      console.error('Error starring file:', error);
+      // Optionally show a toast notification here
+    }
+  };
+
   const renderContent = () => {
     if (!isLoaded || isLoading) return <FileLoadingState />;
     if (error) return <div className="text-center text-red-500 p-8">Error: {error}</div>;
@@ -116,7 +135,7 @@ export default function DashboardContent({
     return (
       <FileList
         files={files}
-        onStar={handleFileAction}
+        onStar={handleStarFile}
         onDelete={handleFileAction}
         onFolderClick={handleFolderClick}
         onRestore={handleFileAction}
@@ -132,9 +151,9 @@ export default function DashboardContent({
         <Sidebar
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          userId={userId}
           currentFolderId={currentFolderId}
           onUploadSuccess={fetchData}
+          onGenerateImageClick={() => setIsGenerateImageModalOpen(true)}
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
@@ -148,7 +167,6 @@ export default function DashboardContent({
               <SearchBar
                 onSearch={handleSearch}
                 onClear={handleClearSearch}
-                isSearching={isLoading}
               />
             </div>
           </div>
@@ -173,6 +191,16 @@ export default function DashboardContent({
           />
         )}
       </AnimatePresence>
+
+      <GenerateImageModal
+        isOpen={isGenerateImageModalOpen}
+        onClose={() => setIsGenerateImageModalOpen(false)}
+        onSuccess={() => {
+          fetchData();
+          setIsGenerateImageModalOpen(false);
+        }}
+        currentFolderId={currentFolderId}
+      />
     </>
   );
 }
