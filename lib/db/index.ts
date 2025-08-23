@@ -11,7 +11,6 @@ import { neon } from "@neondatabase/serverless"
 // Import all our table definitions (the "files" table we created)
 // This tells drizzle what our database looks like
 import * as schema from './schema'
-import * as dotenv from 'dotenv';
 // 🌱 LOAD ENVIRONMENT VARIABLES
 
 // 🔗 CREATE THE CONNECTION

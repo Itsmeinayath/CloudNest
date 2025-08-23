@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { X, Sparkles, Loader2, Save, Image as ImageIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 type GenerateImageModalProps = {
   isOpen: boolean;
@@ -40,8 +40,8 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       const data = await response.json();
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
 
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
@@ -91,8 +91,8 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       onClose();
       onSuccess();
 
-    } catch (err: any) {
-        setError(err.message || "Failed to save the image.");
+    } catch (err: unknown) {
+        setError((err as Error).message || "Failed to save the image.");
     } finally {
         setIsSaving(false);
     }
