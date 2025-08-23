@@ -14,6 +14,7 @@ import FolderNavigation from "./FolderNavigation";
 import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
+import GenerateImageModal from "./GenerateImageModal";
 import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 
 export default function DashboardContent() {
@@ -30,6 +31,7 @@ export default function DashboardContent() {
   >([{ id: null, name: "My Files" }]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -164,6 +166,13 @@ export default function DashboardContent() {
           />
         )}
       </AnimatePresence>
+      
+      <GenerateImageModal 
+        isOpen={isImageModalOpen} 
+        onClose={() => setIsImageModalOpen(false)} 
+        onSuccess={fetchData}
+        currentFolderId={currentFolderId}
+      />
     </>
   );
 }
