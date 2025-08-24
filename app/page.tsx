@@ -49,10 +49,10 @@ const StatItem = ({ number, label, index }: { number: string; label: string; ind
     viewport={{ once: true }}
     className="text-center"
   >
-    <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
       {number}
     </div>
-    <div className="text-gray-400 text-sm uppercase tracking-wider">{label}</div>
+    <div className="text-gray-400 text-xs sm:text-sm uppercase tracking-wider">{label}</div>
   </motion.div>
 );
 
@@ -168,9 +168,9 @@ export default function HomePage() {
         </section>
 
         {/* Statistics Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-y border-gray-800">
-          <div className="container mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+        <section className="py-12 lg:py-20 px-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-y border-gray-800">
+          <div className="container mx-auto max-w-6xl">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               <StatItem number="10K+" label="Active Users" index={0} />
               <StatItem number="50M+" label="Files Stored" index={1} />
               <StatItem number="99.9%" label="Uptime" index={2} />
@@ -265,18 +265,18 @@ export default function HomePage() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-20 px-4 md:px-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+        <section className="py-16 lg:py-24 px-4 md:px-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12 lg:mb-16">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Trusted by Professionals
               </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
+              <p className="text-gray-400 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
                 Join thousands of creators, developers, and businesses who trust CloudNest with their most important files.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[
                 {
                   quote: "CloudNest has revolutionized how I organize my creative projects. The AI search finds exactly what I need in seconds.",
@@ -303,21 +303,21 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/80 border border-gray-700/50 rounded-2xl backdrop-blur-sm"
+                  className="p-6 lg:p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/80 border border-gray-700/50 rounded-2xl backdrop-blur-sm"
                 >
                   <div className="flex items-center mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Sparkles key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial.quote}"</p>
+                  <p className="text-gray-300 mb-6 leading-relaxed text-sm lg:text-base">"{testimonial.quote}"</p>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-sm lg:text-base">
                       {testimonial.avatar}
                     </div>
                     <div>
-                      <div className="font-semibold text-white">{testimonial.author}</div>
-                      <div className="text-gray-400 text-sm">{testimonial.role}</div>
+                      <div className="font-semibold text-white text-sm lg:text-base">{testimonial.author}</div>
+                      <div className="text-gray-400 text-xs lg:text-sm">{testimonial.role}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -327,8 +327,8 @@ export default function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 px-4 md:px-6 bg-gradient-to-br from-purple-900/20 via-gray-900 to-pink-900/20 border-t border-gray-800">
-          <div className="container mx-auto text-center max-w-4xl">
+        <section className="py-20 lg:py-32 px-4 md:px-6 bg-gradient-to-br from-purple-900/20 via-gray-900 to-pink-900/20 border-t border-gray-800">
+          <div className="container mx-auto text-center max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -340,7 +340,7 @@ export default function HomePage() {
                 Join 10,000+ Happy Users
               </div>
               
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 lg:mb-8 leading-tight">
                 <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
                   Ready to Transform Your
                 </span>
@@ -350,21 +350,21 @@ export default function HomePage() {
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-400 mb-12 leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg lg:text-xl xl:text-2xl text-gray-400 mb-12 lg:mb-16 leading-relaxed max-w-3xl mx-auto px-4">
                 Start your journey with CloudNest today. No credit card required, 
                 no setup fees, just intelligent cloud storage that works.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center">
                 <SignedOut>
                   <Link href="/sign-up">
                     <motion.button
                       whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden"
+                      className="group relative px-8 lg:px-12 py-3 lg:py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden w-full sm:w-auto"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative flex items-center gap-3">
+                      <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
                         Start Free Today
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                       </span>
@@ -379,10 +379,10 @@ export default function HomePage() {
                     <motion.button
                       whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden"
+                      className="group relative px-8 lg:px-12 py-3 lg:py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden w-full sm:w-auto"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative flex items-center gap-3">
+                      <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
                         Return to Dashboard 
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                       </span>
