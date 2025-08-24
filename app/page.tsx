@@ -1,6 +1,5 @@
 "use client";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 // import Image from "next/image";
 import { ArrowRight, Cloud, Lock, Zap, Search } from "lucide-react";
@@ -60,28 +59,24 @@ export default function HomePage() {
               AI-powered cloud platform. Simple, fast, and built for you.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <SignedOut>
-                <Link href="/sign-up">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:opacity-90 transition-colors duration-300"
-                  >
-                    Get Started for Free
-                  </motion.button>
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link href="/dashboard">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors duration-300"
-                  >
-                    Go to Dashboard <ArrowRight className="h-5 w-5" />
-                  </motion.button>
-                </Link>
-              </SignedIn>
+              <Link href="/sign-up">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:opacity-90 transition-colors duration-300"
+                >
+                  Get Started for Free
+                </motion.button>
+              </Link>
+              <Link href="/dashboard">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-2 px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors duration-300"
+                >
+                  Go to Dashboard <ArrowRight className="h-5 w-5" />
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </section>
@@ -157,28 +152,15 @@ export default function HomePage() {
             <p className="text-gray-400 mb-8">
               Sign up in seconds and join 1,000+ users building their personal cloud.
             </p>
-            <SignedOut>
-              <Link href="/sign-up">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 mx-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:opacity-90 transition-colors duration-300"
-                >
-                  Let's Go <ArrowRight className="h-5 w-5" />
-                </motion.button>
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link href="/dashboard">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 mx-auto px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition-colors duration-300"
-                >
-                  Back to Dashboard <ArrowRight className="h-5 w-5" />
-                </motion.button>
-              </Link>
-            </SignedIn>
+            <Link href="/sign-up">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 mx-auto px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:opacity-90 transition-colors duration-300"
+              >
+                Let&apos;s Go <ArrowRight className="h-5 w-5" />
+              </motion.button>
+            </Link>
           </div>
         </section>
       </main>
