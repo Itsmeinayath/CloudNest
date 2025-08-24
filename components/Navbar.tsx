@@ -29,37 +29,52 @@ const Logo = () => (
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-700/50 bg-gray-900/95 backdrop-blur-xl">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* THE FIX: The Link now points to "/" to go to the landing page */}
-          <Link href="/" className="flex items-center gap-3">
-            <Logo />
-            <span className="text-xl font-bold text-white tracking-tight">
+        <div className="flex items-center justify-between h-16 lg:h-18">
+          {/* Enhanced Logo with better spacing and hover effects */}
+          <Link href="/" className="flex items-center gap-3 group transition-all duration-300 hover:scale-105">
+            <div className="relative">
+              <Logo />
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-600/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+            </div>
+            <span className="text-xl lg:text-2xl font-bold text-white tracking-tight group-hover:bg-gradient-to-r group-hover:from-cyan-200 group-hover:to-purple-200 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
               CloudNest
             </span>
           </Link>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-4">
+          {/* Enhanced Right Side Actions */}
+          <div className="flex items-center gap-3 lg:gap-4">
             {/* Auth State */}
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <div className="flex items-center gap-3">
+                <UserButton 
+                  afterSignOutUrl="/" 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-10 h-10 ring-2 ring-purple-500/30 hover:ring-purple-400/50 transition-all duration-300"
+                    }
+                  }}
+                />
+              </div>
             </SignedIn>
 
             <SignedOut>
-              <Link
-                href="/sign-in"
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg shadow hover:bg-purple-700 transition-colors"
-              >
-                Sign Up
-              </Link>
+              <div className="flex items-center gap-2 lg:gap-3">
+                <Link
+                  href="/sign-in"
+                  className="px-4 py-2 text-sm font-medium text-gray-200 hover:text-white hover:bg-gray-800/80 rounded-lg transition-all duration-300 border border-transparent hover:border-gray-600/50"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="relative px-4 lg:px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-lg shadow-lg hover:shadow-purple-500/25 transition-all duration-300 border border-purple-500/20 hover:border-purple-400/30 overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-indigo-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative">Sign Up</span>
+                </Link>
+              </div>
             </SignedOut>
           </div>
         </div>
