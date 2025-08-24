@@ -67,9 +67,20 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ imageUrl: res.url }),
             });
-            if (!captionResponse.ok) throw new Error('Failed to generate AI caption.');
+            if (!captionResponse.ok) {
+                const errorText = await captionResponse.text();
+                console.error("Caption API error:", {
+                    status: captionResponse.status,
+                    statusText: captionResponse.statusText,
+                    error: errorText
+                });
+                throw new Error(`Failed to generate AI caption: ${captionResponse.status}`);
+            }
             const data = await captionResponse.json();
             caption = data.caption;
+            
+            // Log successful caption generation
+            console.log("AI caption generated successfully:", caption);
         } catch (captionError) {
             console.error("Caption generation failed:", captionError);
             setError("AI caption failed, but file was saved.");
