@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { imagekit } from '@/lib/imagekit'; // Use our shared server-side client
+import { imagekit, generateThumbnailUrl } from '@/lib/imagekit'; // Import our shared client and thumbnail helper
 
 export async function POST(req: Request) {
   try {
@@ -21,10 +21,19 @@ export async function POST(req: Request) {
       folder: `/cloudnest/${userId}/ai-generated`, // Organize AI-generated images in a specific folder
       useUniqueFileName: false, // Use the provided fileName as-is since it's already unique
       isPrivateFile: false, // Make sure images are publicly accessible for thumbnails
-      // Note: ImageKit automatically generates thumbnailUrl for supported image formats
+      // Note: ImageKit should automatically generate thumbnailUrl for images, but we'll ensure it exists
     });
 
-    // Send the successful response from ImageKit back to the frontend
+    // Ensure thumbnail URL exists - if ImageKit didn't generate one, create it manually
+    if (!imageKitResponse.thumbnailUrl && imageKitResponse.url) {
+      // Generate thumbnail using transformations for AI-generated images (PNG format)
+      const generatedThumbnail = generateThumbnailUrl(imageKitResponse.url, 'image/png');
+      if (generatedThumbnail) {
+        imageKitResponse.thumbnailUrl = generatedThumbnail;
+      }
+    }
+
+    // Return the response with proper thumbnail URL
     return NextResponse.json(imageKitResponse);
 
   } catch (error) {

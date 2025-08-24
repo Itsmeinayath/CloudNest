@@ -9,6 +9,7 @@ import { and, eq } from "drizzle-orm"                     // Drizzle ORM query o
 import ImageKit from "imagekit";                          // ImageKit SDK for server-side operations
 import { NextRequest, NextResponse } from "next/server";  // Next.js API route types
 import { v4 as uuidv4 } from "uuid";                      // UUID generator for unique file names
+import { generateThumbnailUrl } from "@/lib/imagekit";    // Helper function for thumbnail generation
 
 // 🏭 IMAGEKIT CLIENT SETUP
 // Initialize ImageKit with your account credentials (like connecting to your cloud storage)
@@ -130,13 +131,21 @@ export async function POST(request: NextRequest) {
 
         // 🏗️ STEP 12: PREPARE FILE DATA FOR DATABASE
         // Create the file record that will be saved to database
+        
+        // Generate thumbnail URL - ImageKit provides it for images, but we need to create it for PDFs and other files
+        let thumbnailUrl = uploadResponse.thumbnailUrl || null;
+        if (!thumbnailUrl && uploadResponse.url) {
+            // Use our helper function to generate thumbnails for PDFs and other file types
+            thumbnailUrl = generateThumbnailUrl(uploadResponse.url, file.type);
+        }
+        
         const fileData = {
             name: originalFileName,                    // Keep original name for display
             path: uploadResponse.filePath,             // ImageKit file path
             size: file.size,                          // File size in bytes
             type: file.type,                          // MIME type
             fileUrl: uploadResponse.url,              // Direct access URL
-            thumbnailUrl: uploadResponse.thumbnailUrl || null, // Thumbnail URL (if available)
+            thumbnailUrl: thumbnailUrl,               // Thumbnail URL (generated if needed)
             userId: userId,                           // File owner
             parentId: parentId,                       // Parent folder (null = root)
             isFolder: false,                          // This is a file, not folder
