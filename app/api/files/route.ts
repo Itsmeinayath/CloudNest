@@ -83,12 +83,24 @@ export async function POST(req: NextRequest) {
         description: null,
       };
     } else {
+      // Log incoming data for AI-generated images to help debug thumbnail issues
+      if (description && description.includes('AI-generated')) {
+        console.log('[POST /api/files] AI image data:', {
+          name,
+          fileUrl,
+          thumbnailUrl,
+          size,
+          mimeType,
+          imageKitFileId
+        });
+      }
+      
       newRecord = {
         name,
         userId,
         path: name,
         fileUrl,
-        thumbnailUrl,
+        thumbnailUrl: thumbnailUrl || null, // Explicitly handle undefined/empty thumbnails
         size,
         type,
         mimeType,

@@ -54,12 +54,15 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
     setError(null);
 
     try {
+      // Extract the base64 data without the data URL prefix
+      const base64Data = generatedImage.replace(/^data:image\/[a-z]+;base64,/, '');
+      
       // Step 1: Upload the generated base64 image to ImageKit via our secure backend
       const uploadResponse = await fetch('/api/imagekit/upload-generated', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-              base64Image: generatedImage,
+              base64Image: base64Data,
               fileName: `${prompt.substring(0, 20).replace(/\s/g, '_')}_${Date.now()}.png`,
           }),
       });
@@ -69,9 +72,12 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       }
 
       const imageKitData = await uploadResponse.json();
+      
+      // Log the ImageKit response for debugging
+      console.log('ImageKit upload response:', imageKitData);
 
       // Step 2: Save the new file's metadata to our database
-      await fetch('/api/files', {
+      const saveResponse = await fetch('/api/files', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -80,12 +86,17 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
           thumbnailUrl: imageKitData.thumbnailUrl,
           size: imageKitData.size,
           type: "file",
-          mimeType: imageKitData.mimeType,
+          mimeType: imageKitData.fileType || 'image/png',
           imageKitFileId: imageKitData.fileId,
           parentId: currentFolderId,
           description: `AI-generated image based on the prompt: "${prompt}"`,
         }),
       });
+      
+      if (!saveResponse.ok) {
+        const errorText = await saveResponse.text();
+        throw new Error(`Failed to save file metadata: ${errorText}`);
+      }
       
       // Step 3: Close the modal and refresh the file list
       onClose();
