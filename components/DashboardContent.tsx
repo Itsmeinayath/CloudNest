@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react"; // Removed unused 'useMemo'
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import type { File } from "@/lib/db/schema";
 import type { TabValue } from "./Sidebar";
@@ -15,14 +15,14 @@ import SearchBar from "./SearchBar";
 import TrashHeader from "./TrashHeader";
 import FileDetailsModal from "./FileDetailsModal";
 import GenerateImageModal from "./GenerateImageModal";
-import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
+import { AnimatePresence } from "framer-motion";
 
 interface DashboardContentProps {
   userId: string;
 }
 
 export default function DashboardContent({
-  userId,
+  userId: _userId, // Prefix with underscore to indicate intentionally unused
 }: DashboardContentProps) {
   const { isLoaded } = useAuth();
 
@@ -216,29 +216,49 @@ export default function DashboardContent({
           onGenerateImageClick={() => setIsGenerateImageModalOpen(true)}
         />
         <div className="flex-1">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {searchQuery ? `Search Results for "${searchQuery}"` : 
-               activeTab === 'starred' ? 'Starred' : 
-               activeTab === 'trash' ? 'Trash' : 
-               'My Files'}
-            </h1>
-            <div className="w-full sm:w-auto sm:max-w-xs">
-              <SearchBar
-                onSearch={handleSearch}
-                onClear={handleClearSearch}
-              />
+          {/* Modern Header Section */}
+          <div className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 rounded-t-2xl border border-gray-700/50 border-b-0 p-4 lg:p-6 backdrop-blur-sm">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl lg:text-2xl font-bold text-white mb-2">
+                  {searchQuery ? `Search Results for "${searchQuery}"` : 
+                   activeTab === 'starred' ? 'Starred' : 
+                   activeTab === 'trash' ? 'Trash' : 
+                   'My Files'}
+                </h1>
+                <p className="text-gray-400 text-sm lg:text-base">
+                  {activeTab === 'starred' ? 'Your starred files and folders' :
+                   activeTab === 'trash' ? 'Deleted files and folders' :
+                   'Manage and organize your cloud storage'}
+                </p>
+              </div>
+              <div className="w-full lg:w-auto lg:max-w-xs">
+                <SearchBar
+                  onSearch={handleSearch}
+                  onClear={handleClearSearch}
+                />
+              </div>
             </div>
           </div>
 
-          {activeTab === "files" && !searchQuery && (
-            <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
-          )}
-          
-          {activeTab === "trash" && <TrashHeader onEmptyTrash={handleEmptyTrash} onRestoreAll={handleRestoreAll} />}
+          {/* Navigation and Controls */}
+          <div className="bg-gray-800/40 border border-gray-700/50 border-t-0 backdrop-blur-sm">
+            {activeTab === "files" && !searchQuery && (
+              <div className="px-4 lg:px-6 py-3 border-b border-gray-700/30">
+                <FolderNavigation path={folderPath} onNavigate={handleBreadcrumbNavigate} />
+              </div>
+            )}
+            
+            {activeTab === "trash" && (
+              <div className="px-4 lg:px-6 py-3 border-b border-gray-700/30">
+                <TrashHeader onEmptyTrash={handleEmptyTrash} onRestoreAll={handleRestoreAll} />
+              </div>
+            )}
 
-          <div className="mt-4 p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-            <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
+            {/* Content Area */}
+            <div className="p-4 lg:p-6 rounded-b-2xl">
+              <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
+            </div>
           </div>
         </div>
       </div>

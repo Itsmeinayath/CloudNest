@@ -9,24 +9,25 @@ import type { File as FileType } from '@/lib/db/schema';
  */
 export default function FileIcon({ file }: { file: FileType }) {
   const iconProps = {
-    className: "w-12 h-12 text-gray-500 dark:text-gray-400",
-    strokeWidth: 1,
+    className: "w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0",
+    strokeWidth: 1.5,
   };
 
   if (file.isFolder) {
-    return <Folder {...iconProps} className="text-blue-500 dark:text-blue-400 fill-current opacity-20" />;
+    return <Folder {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-blue-400 flex-shrink-0" />;
   }
 
   const mimeType = file.mimeType || '';
 
-  if (mimeType.startsWith('video/')) return <Video {...iconProps} className="text-red-500 dark:text-red-400" />;
-  if (mimeType.startsWith('audio/')) return <Music {...iconProps} className="text-green-500 dark:text-green-400" />;
-  if (mimeType === 'application/pdf') return <FileText {...iconProps} className="text-orange-500 dark:text-orange-400" />;
+  if (mimeType.startsWith('image/')) return <File {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-green-400 flex-shrink-0" />;
+  if (mimeType.startsWith('video/')) return <Video {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-red-400 flex-shrink-0" />;
+  if (mimeType.startsWith('audio/')) return <Music {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-green-400 flex-shrink-0" />;
+  if (mimeType === 'application/pdf') return <FileText {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-red-400 flex-shrink-0" />;
   if (mimeType.startsWith('application/zip') || mimeType.startsWith('application/x-rar-compressed')) {
-    return <Archive {...iconProps} className="text-yellow-500 dark:text-yellow-400" />;
+    return <Archive {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0" />;
   }
-  if (mimeType.startsWith('text/')) return <FileText {...iconProps} />;
+  if (mimeType.startsWith('text/')) return <FileText {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-blue-400 flex-shrink-0" />;
   
-  // Default icon for unknown or non-visual file types
-  return <File {...iconProps} />;
+  // Default icon for unknown file types
+  return <File {...iconProps} className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 flex-shrink-0" />;
 }
