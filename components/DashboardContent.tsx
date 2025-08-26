@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"; // Removed unused 'use
 import { useAuth } from "@clerk/nextjs";
 import type { File } from "@/lib/db/schema";
 import type { TabValue } from "./Sidebar";
+import { Grid3X3, List } from "lucide-react";
 
 // Import all necessary components
 import Sidebar from "./Sidebar";
@@ -20,6 +21,8 @@ import { AnimatePresence } from "framer-motion"; // Removed unused 'motion'
 interface DashboardContentProps {
   userId: string;
 }
+
+type ViewMode = 'grid' | 'list';
 
 export default function DashboardContent({
   userId,
@@ -38,6 +41,7 @@ export default function DashboardContent({
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerateImageModalOpen, setIsGenerateImageModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -188,8 +192,12 @@ export default function DashboardContent({
     }
   };
 
+  const handleViewModeToggle = (mode: ViewMode) => {
+    setViewMode(mode);
+  };
+
   const renderContent = () => {
-    if (!isLoaded || isLoading) return <FileLoadingState />;
+    if (!isLoaded || isLoading) return <FileLoadingState viewMode={viewMode} />;
     if (error) return <div className="text-center text-red-500 p-8">Error: {error}</div>;
     if (files.length === 0) return <FileEmptyState isSearch={!!searchQuery} />;
     return (
@@ -201,6 +209,7 @@ export default function DashboardContent({
         onRestore={handleRestoreFile}
         onDeleteForever={handleDeleteForever}
         onViewDetails={setSelectedFile}
+        viewMode={viewMode}
       />
     );
   };
@@ -217,12 +226,40 @@ export default function DashboardContent({
         />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {searchQuery ? `Search Results for "${searchQuery}"` : 
-               activeTab === 'starred' ? 'Starred' : 
-               activeTab === 'trash' ? 'Trash' : 
-               'My Files'}
-            </h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {searchQuery ? `Search Results for "${searchQuery}"` : 
+                 activeTab === 'starred' ? 'Starred' : 
+                 activeTab === 'trash' ? 'Trash' : 
+                 'My Files'}
+              </h1>
+              
+              {/* View Toggle Buttons */}
+              <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-1">
+                <button
+                  onClick={() => handleViewModeToggle('grid')}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === 'grid'
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                  title="Grid View"
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleViewModeToggle('list')}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                  title="List View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
             <div className="w-full sm:w-auto sm:max-w-xs">
               <SearchBar
                 onSearch={handleSearch}
