@@ -35,8 +35,26 @@ export async function POST(req: Request) {
       fileType: imageKitResponse.fileType
     });
 
+    // Check if thumbnailUrl is missing and try to generate one manually
+    let finalResponse = imageKitResponse;
+    if (!imageKitResponse.thumbnailUrl) {
+      console.log('[UPLOAD_GENERATED_IMAGE] No thumbnail URL, attempting to generate one manually...');
+      
+      // Generate a thumbnail URL using ImageKit's URL-based transformations
+      // This creates a thumbnail by appending transformation parameters to the main image URL
+      const baseUrl = imageKitResponse.url;
+      const thumbnailUrl = baseUrl.replace(/(\.[^.]+)$/, '') + '?tr=w-150,h-150,c-at_max,f-auto';
+      
+      finalResponse = {
+        ...imageKitResponse,
+        thumbnailUrl: thumbnailUrl
+      };
+      
+      console.log('[UPLOAD_GENERATED_IMAGE] Generated manual thumbnail URL:', thumbnailUrl);
+    }
+
     // Send the successful response from ImageKit back to the frontend
-    return NextResponse.json(imageKitResponse);
+    return NextResponse.json(finalResponse);
 
   } catch (error) {
     console.error('[UPLOAD_GENERATED_IMAGE_ROUTE] Detailed error:', error);
