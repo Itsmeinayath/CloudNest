@@ -14,6 +14,7 @@ interface FileListProps {
   onRestore: (file: FileType) => void;
   onDeleteForever: (file: FileType) => void;
   onViewDetails: (file: FileType) => void; // Add the missing prop here
+  viewMode: 'grid' | 'list';
 }
 
 export default function FileList({ 
@@ -23,7 +24,8 @@ export default function FileList({
   onDelete,
   onRestore,
   onDeleteForever,
-  onViewDetails // Destructure the new prop
+  onViewDetails, // Destructure the new prop
+  viewMode
 }: FileListProps) {
 
   const formatFileSize = (bytes: number): string => {
@@ -34,6 +36,67 @@ export default function FileList({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
+  if (viewMode === 'list') {
+    // List view rendering
+    return (
+      <div className="space-y-2">
+        {files.map((file) => {
+          const isImage = file.mimeType?.startsWith('image/');
+          
+          return (
+            <div
+              key={file.id}
+              className="group flex items-center gap-4 p-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+              onDoubleClick={() => {
+                if (file.isFolder) onFolderClick(file);
+              }}
+            >
+              <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                {isImage && (file.thumbnailUrl || file.fileUrl) ? (
+                  <img
+                    src={file.thumbnailUrl || file.fileUrl!}
+                    alt={`Preview of ${file.name}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                ) : (
+                  <FileIcon file={file} />
+                )}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                    {file.name}
+                  </p>
+                  {file.isStarred && (
+                    <Star className="w-4 h-4 text-yellow-500 fill-current flex-shrink-0" />
+                  )}
+                </div>
+                {!file.isFolder && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {formatFileSize(file.size)}
+                  </p>
+                )}
+              </div>
+              
+              <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <FileAction 
+                  file={file} 
+                  onStar={onStar} 
+                  onDelete={onDelete}
+                  onRestore={onRestore}
+                  onDeleteForever={onDeleteForever}
+                  onViewDetails={onViewDetails}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Grid view rendering (default)
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
       {files.map((file) => {
