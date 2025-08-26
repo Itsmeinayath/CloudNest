@@ -21,14 +21,25 @@ export async function POST(req: Request) {
       folder: `/cloudnest/${userId}/ai-generated`, // Organize AI-generated images in a specific folder
       useUniqueFileName: false, // Use the provided fileName as-is since it's already unique
       isPrivateFile: false, // Make sure images are publicly accessible for thumbnails
-      // Note: ImageKit automatically generates thumbnailUrl for supported image formats
+      // Force thumbnail generation for all image types
+      tags: ['ai-generated', 'thumbnail-required']
+    });
+
+    // Log the response to help debug thumbnail issues
+    console.log('[UPLOAD_GENERATED_IMAGE] ImageKit response:', {
+      fileId: imageKitResponse.fileId,
+      name: imageKitResponse.name,
+      url: imageKitResponse.url,
+      thumbnailUrl: imageKitResponse.thumbnailUrl,
+      size: imageKitResponse.size,
+      fileType: imageKitResponse.fileType
     });
 
     // Send the successful response from ImageKit back to the frontend
     return NextResponse.json(imageKitResponse);
 
   } catch (error) {
-    console.error('[UPLOAD_GENERATED_IMAGE_ROUTE]', error);
+    console.error('[UPLOAD_GENERATED_IMAGE_ROUTE] Detailed error:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
