@@ -1,110 +1,121 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { auth } from '@clerk/nextjs/server';
-import { db } from '@/lib/db';
-import { files, NewFile } from '@/lib/db/schema';
-import { and, eq, isNull } from 'drizzle-orm';
 
-// GET function remains the same...
-export async function GET(req: NextRequest) {
-  try {
-    const { userId } = await auth();
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
 
-    const parentId = req.nextUrl.searchParams.get("parentId");
-    const filter = req.nextUrl.searchParams.get("filter");
 
-    const conditions = [eq(files.userId, userId)];
+export async function POST(req: Request) {
 
-    if (filter === 'trash') {
-      conditions.push(eq(files.isTrash, true));
-    } else if (filter === 'starred') {
-      conditions.push(eq(files.isTrash, false), eq(files.isStarred, true));
-    } else {
-      conditions.push(eq(files.isTrash, false));
-      if (parentId) {
-        conditions.push(eq(files.parentId, parentId));
-      } else {
-        conditions.push(isNull(files.parentId));
-      }
-    }
+  try {
 
-    const userFiles = await db.select().from(files).where(and(...conditions));
-    return NextResponse.json(userFiles);
-    
-  } catch (error) {
-    console.error("DETAILED ERROR in GET /api/files:", error);
-    return new NextResponse('Internal Server Error', { status: 500 });
-  }
-}
+    const { userId } = await auth();
 
-/**
- * POST function now correctly handles the mimeType.
- */
-export async function POST(req: NextRequest) {
-  try {
-    const { userId } = await auth();
-    if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
+    if (!userId) {
 
-    const body = await req.json();
-    
-    // THE FIX: Use a let for name so we can provide a fallback
-    let { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+      return new NextResponse('Unauthorized', { status: 401 });
 
-    // If the name is missing (especially for AI generated images), create a fallback name.
-    if (!name && description) {
-      name = description.substring(0, 30).replace(/\s/g, '_') + '.png';
-    } else if (!name) {
-      name = `file_${Date.now()}`; // A generic fallback if all else fails
-    }
+    }
 
-    let newRecord: NewFile;
 
-    if (isFolder) {
-      newRecord = {
-        name,
-        userId,
-        isFolder: true,
-        parentId: parentId || null,
-        path: name,
-        size: 0,
-        type: 'folder',
-        isShared: false,
-        isStarred: false,
-        isTrash: false,
-        fileUrl: null,
-        thumbnailUrl: null,
-        mimeType: null,
-        imageKitFileId: null,
-        description: null,
-      };
-    } else {
-      newRecord = {
-        name,
-        userId,
-        path: name,
-        fileUrl,
-        thumbnailUrl,
-        size,
-        type,
-        mimeType,
-        imageKitFileId,
-        parentId: parentId || null,
-        description: description || null,
-        isFolder: false,
-        isStarred: false,
-        isTrash: false,
-        isShared: false,
-      };
-    }
 
-    const [insertedRecord] = await db.insert(files).values(newRecord).returning();
-    return NextResponse.json(insertedRecord, { status: 201 });
-  } catch (error) {
-    console.error("DETAILED ERROR in POST /api/files:", error);
-    return new NextResponse('Internal Server Error', { status: 500 });
-  }
+    const { prompt } = await req.json();
+
+    if (!prompt) {
+
+      return new NextResponse('Prompt is required', { status: 400 });
+
+    }
+
+
+
+    const payload = {
+
+      contents: [{
+
+        parts: [{ text: prompt }]
+
+      }],
+
+      generationConfig: {
+
+        responseModalities: ['TEXT', 'IMAGE']
+
+      },
+
+    };
+
+
+
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+
+      return new NextResponse('Gemini API key not configured', { status: 500 });
+
+    }
+
+
+
+    const modelName = "gemini-2.0-flash-preview-image-generation";
+
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+
+
+    const response = await fetch(apiUrl, {
+
+      method: 'POST',
+
+      headers: { 'Content-Type': 'application/json' },
+
+      body: JSON.stringify(payload),
+
+    });
+
+
+
+    if (!response.ok) {
+
+      const errorText = await response.text();
+
+      console.error("Gemini Image Generation API Error:", errorText);
+
+      return new NextResponse('Failed to generate image', { status: 500 });
+
+    }
+
+
+
+    const result = await response.json();
+
+
+
+    const imagePart = result.candidates?.[0]?.content?.parts?.find((part: any) => part.inlineData);
+
+    const imageBase64 = imagePart?.inlineData?.data;
+
+
+
+    if (!imageBase64) {
+
+      console.error("No image data found in Gemini response:", result);
+
+      return new NextResponse('No image data received from API', { status: 500 });
+
+    }
+
+
+
+    return NextResponse.json({ imageBase64 });
+
+
+
+  } catch (error) {
+
+    console.error('[GENERATE_IMAGE_ROUTE]', error);
+
+    return new NextResponse('Internal Server Error', { status: 500 });
+
+  }
+
 }
