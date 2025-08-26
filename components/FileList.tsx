@@ -35,57 +35,45 @@ export default function FileList({
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div className="space-y-2">
       {files.map((file) => {
-        const isImage = file.mimeType?.startsWith('image/');
-        
         return (
           <div
             key={file.id}
-            className="group relative bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500"
+            className="flex items-center gap-3 lg:gap-4 p-2 lg:p-3 rounded-lg hover:bg-gray-700/30 transition-colors group cursor-pointer"
             onDoubleClick={() => {
               if (file.isFolder) onFolderClick(file);
             }}
           >
-            <div className="absolute top-2 right-2 z-20">
-              {/* THE FIX: Pass all the props down to the FileAction component */}
-              <FileAction 
-                file={file} 
-                onStar={onStar} 
-                onDelete={onDelete}
-                onRestore={onRestore}
-                onDeleteForever={onDeleteForever}
-                onViewDetails={onViewDetails}
-              />
+            <div className="flex-shrink-0">
+              <FileIcon file={file} />
             </div>
-
-            {file.isStarred && (
-              <div className="absolute top-2 left-2 z-10 p-1 bg-white/80 dark:bg-gray-900/80 rounded-full shadow">
-                <Star className="w-4 h-4 text-yellow-500 fill-current" />
-              </div>
-            )}
-
-            <div className="h-32 w-full flex items-center justify-center">
-              {isImage && (file.thumbnailUrl || file.fileUrl) ? (
-                <img
-                  src={file.thumbnailUrl || file.fileUrl!}
-                  alt={`Preview of ${file.name}`}
-                  className="w-full h-full object-cover rounded-t-lg"
-                />
-              ) : (
-                <FileIcon file={file} />
-              )}
-            </div>
-
-            <div className="p-3 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+            
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-medium truncate text-sm lg:text-base">
                 {file.name}
               </p>
               {!file.isFolder && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-gray-400 text-xs lg:text-sm">
                   {formatFileSize(file.size)}
                 </p>
               )}
+            </div>
+
+            <div className="flex items-center gap-1 lg:gap-2">
+              {file.isStarred && (
+                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+              )}
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <FileAction 
+                  file={file} 
+                  onStar={onStar} 
+                  onDelete={onDelete}
+                  onRestore={onRestore}
+                  onDeleteForever={onDeleteForever}
+                  onViewDetails={onViewDetails}
+                />
+              </div>
             </div>
           </div>
         );

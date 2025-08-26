@@ -19,8 +19,8 @@ const NavItem = ({ isActive, onClick, children }: { isActive: boolean; onClick: 
     onClick={onClick}
     className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
       isActive
-        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+        ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+        : 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
     }`}
   >
     {children}
@@ -31,9 +31,9 @@ export default function Sidebar({ activeTab, onTabChange, currentFolderId, onUpl
   return (
     <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-6">
       {/* Actions Section */}
-      <div className="p-4 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm space-y-4">
+      <div className="p-4 bg-gray-800/40 border border-gray-700/50 rounded-xl backdrop-blur-sm space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upload File</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">Upload File</h2>
           <FileUploadForm 
             currentFolder={currentFolderId} 
             onUploadSuccess={onUploadSuccess} 
