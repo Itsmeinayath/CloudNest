@@ -75,6 +75,19 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
       
       // Log the ImageKit response for debugging
       console.log('ImageKit upload response:', imageKitData);
+      
+      // Validate that we have essential data
+      if (!imageKitData.url) {
+        throw new Error('ImageKit upload succeeded but no URL was returned');
+      }
+      
+      // Ensure we have a thumbnail URL, generate one if missing
+      let thumbnailUrl = imageKitData.thumbnailUrl;
+      if (!thumbnailUrl) {
+        console.log('No thumbnail URL provided by ImageKit, using main image URL');
+        // Use the main image URL with transformation parameters as fallback
+        thumbnailUrl = imageKitData.url + '?tr=w-150,h-150,c-at_max,f-auto';
+      }
 
       // Step 2: Save the new file's metadata to our database
       const saveResponse = await fetch('/api/files', {
@@ -83,7 +96,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
         body: JSON.stringify({
           name: imageKitData.name,
           fileUrl: imageKitData.url,
-          thumbnailUrl: imageKitData.thumbnailUrl,
+          thumbnailUrl: thumbnailUrl, // Use our ensured thumbnail URL
           size: imageKitData.size,
           type: "file",
           mimeType: imageKitData.fileType || 'image/png',
