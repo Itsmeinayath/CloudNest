@@ -102,6 +102,12 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(59,130,246,0.2),transparent_40%)] animate-pulse delay-2000"></div>
           </div>
 
+          {/* Modern geometric patterns */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-xl animate-float"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-xl animate-float delay-1000"></div>
+          </div>
+
           {/* Floating particles effect */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(20)].map((_, i) => (
@@ -132,24 +138,24 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-purple-300 bg-purple-900/30 border border-purple-500/30 rounded-full backdrop-blur-sm"
             >
               <Sparkles className="w-4 h-4" />
-              Introducing CloudNest 2.0
+              Trusted by 10,000+ Organizations
               <ChevronRight className="w-4 h-4" />
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight mb-6 lg:mb-8 leading-tight">
               <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
-                Your Personal Cloud,
+                Enterprise-Grade Cloud Storage
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                Reimagined
+                Built for Modern Teams
               </span>
             </h1>
             
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl mx-auto mb-12 lg:mb-16 leading-relaxed px-4">
-              Experience the future of cloud storage with AI-powered organization, 
-              military-grade security, and blazing-fast performance. 
-              <span className="text-purple-300 font-semibold">Simple. Intelligent. Secure.</span>
+              Secure, intelligent, and lightning-fast cloud storage with AI-powered organization. 
+              <br className="hidden md:block" />
+              Trusted by <span className="text-purple-300 font-semibold">10,000+ professionals</span> worldwide.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center mb-16">
@@ -162,7 +168,7 @@ export default function HomePage() {
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
-                      Get Started for Free 
+                      Start Free Trial 
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                     </span>
                   </motion.button>
@@ -201,10 +207,10 @@ export default function HomePage() {
         <section className="py-12 lg:py-20 px-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-y border-gray-800">
           <div className="container mx-auto max-w-6xl">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              <StatItem number="10K+" label="Active Users" index={0} />
-              <StatItem number="50M+" label="Files Stored" index={1} />
-              <StatItem number="99.9%" label="Uptime" index={2} />
-              <StatItem number="256-bit" label="Encryption" index={3} />
+              <StatItem number="10K+" label="Organizations Trust Us" index={0} />
+              <StatItem number="500M+" label="Files Secured" index={1} />
+              <StatItem number="99.99%" label="Uptime SLA" index={2} />
+              <StatItem number="AES-256" label="Bank-Grade Encryption" index={3} />
             </div>
           </div>
         </section>
@@ -220,11 +226,11 @@ export default function HomePage() {
           >
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Beautiful. Intuitive. Powerful.
+                Designed for Professional Teams
               </h2>
               <p className="text-gray-400 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-                Experience a cloud storage platform that's as beautiful as it is functional. 
-                Every detail crafted for the modern user.
+                Experience enterprise-grade cloud storage with an interface so intuitive, 
+                your team will be productive from day one. No training required.
               </p>
             </div>
             
@@ -254,14 +260,14 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-purple-300 bg-purple-900/30 border border-purple-500/30 rounded-full"
               >
                 <Shield className="w-4 h-4" />
-                Enterprise-Grade Features
+                Enterprise-Ready Features
               </motion.div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 lg:mb-8 bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
-                More Than Just Storage
+                Everything Your Business Needs
               </h2>
               <p className="text-lg lg:text-xl xl:text-2xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
-                CloudNest combines cutting-edge technology with intuitive design to deliver 
-                a cloud storage experience that anticipates your needs.
+                From secure file sharing to AI-powered search, CloudNest provides all the tools 
+                modern teams need to collaborate efficiently and securely.
               </p>
             </div>
             
@@ -269,26 +275,26 @@ export default function HomePage() {
               <FeatureCard
                 index={0}
                 icon={<Cloud className="w-8 h-8 text-blue-400" />}
-                title="Seamless Uploads"
-                description="Effortlessly upload any file type with our intuitive drag-and-drop interface. Batch uploads, progress tracking, and smart compression included."
+                title="Enterprise File Management"
+                description="Advanced file organization with folder structures, tags, and metadata. Support for all file types with automated backup and version control."
               />
               <FeatureCard
                 index={1}
                 icon={<Lock className="w-8 h-8 text-green-400" />}
-                title="Fort-Knox Security"
-                description="Your files are protected with military-grade encryption, two-factor authentication, and advanced threat detection systems."
+                title="Bank-Level Security"
+                description="AES-256 encryption, SOC 2 compliance, and advanced access controls. Your data is protected with the same security used by financial institutions."
               />
               <FeatureCard
                 index={2}
                 icon={<Search className="w-8 h-8 text-purple-400" />}
-                title="AI-Powered Search"
-                description="Find any image by describing it in natural language. Our AI understands context, objects, and even emotions in your photos."
+                title="AI-Powered Discovery"
+                description="Find files instantly using natural language queries. Our AI understands context, content, and relationships between your documents and media."
               />
               <FeatureCard
                 index={3}
                 icon={<Zap className="w-8 h-8 text-yellow-400" />}
-                title="Blazing Fast"
-                description="Built on a global CDN with edge caching for instant access. Experience sub-second load times from anywhere in the world."
+                title="Global Performance"
+                description="Lightning-fast access from anywhere with our global CDN. Sub-second file loading with 99.99% uptime SLA and redundant backup systems."
               />
             </div>
           </div>
@@ -299,31 +305,32 @@ export default function HomePage() {
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Trusted by Professionals
+                Trusted by Industry Leaders
               </h2>
               <p className="text-gray-400 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-                Join thousands of creators, developers, and businesses who trust CloudNest with their most important files.
+                From startups to Fortune 500 companies, organizations worldwide trust CloudNest 
+                to secure and organize their most critical business data.
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[
                 {
-                  quote: "CloudNest has revolutionized how I organize my creative projects. The AI search finds exactly what I need in seconds.",
+                  quote: "CloudNest has transformed how our design team collaborates. The AI search finds project assets instantly, saving us hours every week.",
                   author: "Sarah Chen",
-                  role: "Digital Artist",
+                  role: "Creative Director, DesignFlow",
                   avatar: "SC"
                 },
                 {
-                  quote: "Finally, a cloud storage that actually understands security. Perfect for our team's sensitive client data.",
+                  quote: "Security and compliance were our top priorities. CloudNest's enterprise features and SOC 2 certification made the decision easy.",
                   author: "Marcus Rodriguez",
-                  role: "CTO, TechFlow",
+                  role: "CISO, TechVentures Inc",
                   avatar: "MR"
                 },
                 {
-                  quote: "The interface is incredibly intuitive. My entire team was productive from day one without any training.",
+                  quote: "The seamless integration with our existing tools and the intuitive interface had our entire team productive from day one.",
                   author: "Emma Thompson",
-                  role: "Project Manager",
+                  role: "VP Operations, GrowthCorp",
                   avatar: "ET"
                 }
               ].map((testimonial, index) => (
@@ -356,6 +363,218 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Pricing Preview Section */}
+        <section className="py-16 lg:py-24 px-4 md:px-6 bg-gradient-to-br from-gray-900 via-purple-900/5 to-gray-900">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12 lg:mb-16">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Simple, Transparent Pricing
+              </h2>
+              <p className="text-gray-400 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
+                Start free and scale as you grow. No hidden fees, no complex tiers.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+              {/* Starter Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="relative p-6 lg:p-8 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-2xl backdrop-blur-sm"
+              >
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">Starter</h3>
+                  <div className="text-3xl font-bold text-purple-400 mb-1">Free</div>
+                  <div className="text-gray-400 text-sm mb-6">Forever</div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>5GB Storage</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Basic AI Search</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Mobile & Web Access</span>
+                    </li>
+                  </ul>
+                  <button className="w-full py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                    Get Started
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Professional Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="relative p-6 lg:p-8 bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-2 border-purple-500/50 rounded-2xl backdrop-blur-sm scale-105"
+              >
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold px-4 py-1 rounded-full">
+                  MOST POPULAR
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">Professional</h3>
+                  <div className="text-3xl font-bold text-purple-400 mb-1">$12</div>
+                  <div className="text-gray-400 text-sm mb-6">per user/month</div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>1TB Storage</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Advanced AI Features</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Team Collaboration</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Priority Support</span>
+                    </li>
+                  </ul>
+                  <button className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg transition-all">
+                    Start Free Trial
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Enterprise Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="relative p-6 lg:p-8 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-2xl backdrop-blur-sm"
+              >
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">Enterprise</h3>
+                  <div className="text-3xl font-bold text-purple-400 mb-1">Custom</div>
+                  <div className="text-gray-400 text-sm mb-6">Contact us</div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Unlimited Storage</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>SOC 2 Compliance</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>24/7 Dedicated Support</span>
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span>Custom Integrations</span>
+                    </li>
+                  </ul>
+                  <button className="w-full py-3 px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                    Contact Sales
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Indicators Section */}
+        <section className="py-16 lg:py-20 px-4 md:px-6 bg-gray-900">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h3 className="text-xl lg:text-2xl font-semibold text-gray-300 mb-8">
+                Trusted by teams at these organizations
+              </h3>
+              <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-12 opacity-60">
+                {/* Company placeholders - these would be replaced with actual company logos */}
+                {[
+                  "TechCorp", "InnovateLabs", "DataFlow", "SecureCloud", "TeamSync", "BuildFast"
+                ].map((company, index) => (
+                  <div key={company} className="flex items-center justify-center h-12 px-6 bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg border border-gray-600/50">
+                    <span className="text-gray-300 font-medium text-sm lg:text-base">{company}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Security & Compliance Badges */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+              <div className="text-center p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-xl">
+                <Shield className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                <div className="text-sm font-semibold text-white mb-1">SOC 2 Certified</div>
+                <div className="text-xs text-gray-400">Security Compliant</div>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-xl">
+                <Lock className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                <div className="text-sm font-semibold text-white mb-1">AES-256</div>
+                <div className="text-xs text-gray-400">Bank-Grade Encryption</div>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-xl">
+                <Users className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                <div className="text-sm font-semibold text-white mb-1">24/7 Support</div>
+                <div className="text-xs text-gray-400">Enterprise Grade</div>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-gray-800/60 to-gray-900/80 border border-gray-700/50 rounded-xl">
+                <Zap className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
+                <div className="text-sm font-semibold text-white mb-1">99.99% SLA</div>
+                <div className="text-xs text-gray-400">Guaranteed Uptime</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-20 lg:py-32 px-4 md:px-6 bg-gradient-to-br from-purple-900/20 via-gray-900 to-pink-900/20 border-t border-gray-800">
           <div className="container mx-auto text-center max-w-5xl">
@@ -367,22 +586,22 @@ export default function HomePage() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-purple-300 bg-purple-900/30 border border-purple-500/30 rounded-full">
                 <Users className="w-4 h-4" />
-                Join 10,000+ Happy Users
+                Join 10,000+ Organizations
               </div>
               
               <h2 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 lg:mb-8 leading-tight">
                 <span className="bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
-                  Ready to Transform Your
+                  Ready to Secure Your
                 </span>
                 <br />
                 <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                  Digital Life?
+                  Business Data?
                 </span>
               </h2>
               
               <p className="text-lg lg:text-xl xl:text-2xl text-gray-400 mb-12 lg:mb-16 leading-relaxed max-w-3xl mx-auto px-4">
-                Start your journey with CloudNest today. No credit card required, 
-                no setup fees, just intelligent cloud storage that works.
+                Start with our free tier today. Enterprise-grade security, AI-powered organization, 
+                and 24/7 support. No credit card required.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center">
@@ -395,7 +614,7 @@ export default function HomePage() {
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
-                        Start Free Today
+                        Start Free Trial
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                       </span>
                     </motion.button>
@@ -438,8 +657,8 @@ export default function HomePage() {
                 <span className="text-xl font-bold text-white">CloudNest</span>
               </div>
               <p className="text-gray-400 mb-4 max-w-md">
-                The intelligent cloud storage platform designed for the modern world. 
-                Secure, fast, and built with AI at its core.
+                Enterprise-grade cloud storage platform designed for modern businesses. 
+                Secure, intelligent, and trusted by organizations worldwide.
               </p>
               <div className="flex gap-4">
                 {['Twitter', 'GitHub', 'LinkedIn'].map((social) => (

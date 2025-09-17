@@ -17,7 +17,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // The ClerkProvider now correctly wraps the <html> tag content
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className="font-sans">
