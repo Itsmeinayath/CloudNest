@@ -1,6 +1,7 @@
 "use client";
 
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+// Temporarily removed Clerk imports for landing page preview
+// import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 // import Image from "next/image";
 import { ArrowRight, Cloud, Lock, Zap, Search, Users, Shield, Sparkles, Play, ChevronRight } from "lucide-react";
@@ -153,7 +154,7 @@ export default function HomePage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center mb-16">
-              <SignedOut>
+              {/* Temporarily showing both options for preview */}
                 <Link href="/sign-up">
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
@@ -177,22 +178,6 @@ export default function HomePage() {
                     <span className="text-sm lg:text-base">Watch Demo</span>
                   </motion.button>
                 </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link href="/dashboard">
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group relative px-8 lg:px-12 py-3 lg:py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden w-full sm:w-auto"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
-                      Go to Dashboard 
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                    </span>
-                  </motion.button>
-                </Link>
-              </SignedIn>
             </div>
           </motion.div>
         </section>
@@ -386,7 +371,7 @@ export default function HomePage() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center">
-                <SignedOut>
+                {/* Temporarily showing both options for preview */}
                   <Link href="/sign-up">
                     <motion.button
                       whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
@@ -403,22 +388,6 @@ export default function HomePage() {
                   <div className="text-sm text-gray-500">
                     Free forever • No credit card required
                   </div>
-                </SignedOut>
-                <SignedIn>
-                  <Link href="/dashboard">
-                    <motion.button
-                      whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(124, 58, 237, 0.4)" }}
-                      whileTap={{ scale: 0.95 }}
-                      className="group relative px-8 lg:px-12 py-3 lg:py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 overflow-hidden w-full sm:w-auto"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative flex items-center justify-center gap-3 text-sm lg:text-base">
-                        Go to Dashboard 
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                      </span>
-                    </motion.button>
-                  </Link>
-                </SignedIn>
               </div>
             </motion.div>
           </div>
