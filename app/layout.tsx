@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import "./globals.css";
-// Temporarily commented out Clerk for landing page preview
-// import { ClerkProvider } from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/components/theme-provider";
 
 // const inter = Inter({ subsets: ["latin"] });
@@ -18,8 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Temporarily disabled ClerkProvider for landing page preview
-    // <ClerkProvider>
+    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className="font-sans">
           {/* The ThemeProvider handles light/dark mode safely, 
@@ -35,6 +33,6 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    // </ClerkProvider>
+    </ClerkProvider>
   );
 }
