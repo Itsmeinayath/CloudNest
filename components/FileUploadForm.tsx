@@ -77,7 +77,7 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
     }
 
     try {
-      await fetch('/api/files', {
+      const response = await fetch('/api/files', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -85,13 +85,19 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
           fileUrl: res.url,
           thumbnailUrl: res.thumbnailUrl,
           size: res.size,
-          type: "file",
+          type: fileMimeTypeRef.current || 'application/octet-stream',
           mimeType: fileMimeTypeRef.current,
           imageKitFileId: res.fileId,
           parentId: currentFolder,
           description: caption,
+          isFolder: false,
         }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
       
       setStatus('success');
       setTimeout(() => {
@@ -101,7 +107,7 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
 
     } catch (dbError) {
       console.error("Failed to save file metadata:", dbError);
-      setError("File uploaded but failed to save.");
+      setError(dbError instanceof Error ? dbError.message : "File uploaded but failed to save.");
       setStatus('error');
     }
   };
