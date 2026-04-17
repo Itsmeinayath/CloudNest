@@ -33,13 +33,8 @@ const FeatureCard = ({
   </motion.div>
 );
 
-/* Stat Pill */
-const StatPill = ({ value, label }: { value: string; label: string }) => (
-  <div className="flex flex-col items-center gap-1 px-6">
-    <span className="text-2xl font-bold text-white">{value}</span>
-    <span className="text-xs text-[#5c6070] uppercase tracking-wider">{label}</span>
-  </div>
-);
+
+
 
 /* High-Fidelity Dashboard Mockup */
 const DashboardPreview = () => (
