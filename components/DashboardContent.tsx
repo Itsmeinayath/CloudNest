@@ -98,7 +98,7 @@ export default function DashboardContent({ userId, userName }: DashboardContentP
               {searchQuery ? `Search Results for "${searchQuery}"` : activeTab === 'starred' ? 'Starred Files' : activeTab === 'trash' ? 'Trash' : 'Workspace'}
             </h1>
             <div className="w-full sm:w-auto sm:max-w-xs">
-              <SearchBar onSearch={handleSearch} onClear={handleClearSearch} isSearching={isLoading} />
+              <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
             </div>
           </div>
 
