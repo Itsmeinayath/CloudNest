@@ -32,8 +32,12 @@ export default function SignUpForm() {
         redirectUrl: '/sso-callback',
         redirectUrlComplete: '/dashboard',
       });
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred with Google Sign-Up.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred with Google Sign-Up.');
+      }
     }
   };
 
@@ -47,8 +51,12 @@ export default function SignUpForm() {
       await signUp.create({ emailAddress: email, password });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setStep('verify');
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'An error occurred during sign-up.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred during sign-up.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,8 +74,12 @@ export default function SignUpForm() {
         await setActive({ session: result.createdSessionId });
         router.push('/dashboard');
       }
-    } catch (err: any) { // CORRECTED: Added opening brace for the catch block
-      setError(err.errors?.[0]?.message || 'Invalid verification code. Please try again.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Invalid verification code. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

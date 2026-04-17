@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { X, Sparkles, Loader2, Save, Image as ImageIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 type GenerateImageModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void; // To refresh the file list after saving
+  onSuccess: () => void;
   currentFolderId: string | null;
 };
 
@@ -54,7 +54,6 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
     setError(null);
 
     try {
-      // Step 1: Upload the generated base64 image to ImageKit via our secure backend
       const uploadResponse = await fetch('/api/imagekit/upload-generated', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -70,7 +69,6 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
 
       const imageKitData = await uploadResponse.json();
 
-      // Step 2: Save the new file's metadata to our database
       await fetch('/api/files', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,7 +85,6 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
         }),
       });
       
-      // Step 3: Close the modal and refresh the file list
       onClose();
       onSuccess();
 
@@ -101,26 +98,26 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg flex flex-col max-h-[90vh]"
+        className="relative bg-[#1a1d25] border border-[rgba(255,255,255,0.08)] rounded-2xl shadow-2xl shadow-black/50 w-full max-w-lg"
       >
-        <div className="flex-shrink-0 flex items-center justify-between p-4 border-b dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-500" />
+        <div className="flex items-center justify-between p-5 border-b border-[rgba(255,255,255,0.06)]">
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-violet-400" />
             AI Image Generation
           </h3>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#22252f] transition-colors">
+            <X className="w-4 h-4 text-[#8b8fa3]" />
           </button>
         </div>
         
-        <div className="p-6 flex-1 overflow-y-auto">
+        <div className="p-6">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div>
-              <label htmlFor="prompt" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+              <label htmlFor="prompt" className="text-sm font-medium text-[#8b8fa3] mb-2 block">
                 Describe the image you want to create
               </label>
               <textarea
@@ -128,37 +125,37 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="e.g., A majestic lion wearing a crown, photorealistic style"
-                className="w-full h-24 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full h-24 bg-[#12141a] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-2.5 text-[#f0f0f3] placeholder-[#5c6070] focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500/50 transition-all resize-none"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={isLoading || isSaving}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors disabled:bg-purple-400 dark:disabled:bg-purple-800"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-violet-600 hover:bg-violet-500 rounded-lg transition-colors disabled:opacity-50 shadow-md shadow-violet-600/20"
             >
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               {isLoading ? 'Generating...' : 'Generate Image'}
             </button>
           </form>
 
-          {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
+          {error && <p className="text-rose-400 text-sm mt-4 text-center">{error}</p>}
 
           <div className="mt-6">
             {isLoading && (
-              <div className="w-full h-64 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center animate-pulse">
-                <ImageIcon className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+              <div className="w-full h-64 bg-[#12141a] border border-[rgba(255,255,255,0.06)] rounded-xl flex items-center justify-center animate-pulse">
+                <ImageIcon className="w-10 h-10 text-[#22252f]" />
               </div>
             )}
             {generatedImage && (
               <div className="space-y-4">
-                <img src={generatedImage} alt="AI generated image" className="w-full object-contain rounded-lg border dark:border-gray-700 mx-auto" />
+                <img src={generatedImage} alt="AI generated image" className="w-full rounded-xl border border-[rgba(255,255,255,0.06)]" />
                 <button
                   onClick={handleSaveToCloudNest}
                   disabled={isSaving}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:bg-blue-400"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors disabled:opacity-50 shadow-md shadow-indigo-600/20"
                 >
-                  {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {isSaving ? 'Saving...' : 'Save to CloudNest'}
                 </button>
               </div>

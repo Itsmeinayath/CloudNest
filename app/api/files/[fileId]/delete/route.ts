@@ -6,6 +6,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 
 // A recursive function to find all descendant IDs of a folder
 async function getAllDescendantIds(folderId: string, userId: string): Promise<string[]> {
+  // CORRECTED: Changed 'let' to 'const' as these are not reassigned.
   const idsToDelete: string[] = [folderId];
   const queue: string[] = [folderId];
 
@@ -43,7 +44,6 @@ export async function DELETE(
       return new NextResponse('File ID is required', { status: 400 });
     }
 
-    // First, find the item to be deleted to check if it's a folder
     const [itemToDelete] = await db
       .select()
       .from(files)
@@ -56,15 +56,12 @@ export async function DELETE(
     let allIdsToTrash: string[] = [];
 
     if (itemToDelete.isFolder) {
-      // If it's a folder, find all its descendants
       allIdsToTrash = await getAllDescendantIds(fileId, userId);
     } else {
-      // If it's just a file, we only trash that one item
       allIdsToTrash = [fileId];
     }
     
     if (allIdsToTrash.length > 0) {
-        // Perform the "soft delete" by archiving all identified files and folders
         await db
         .update(files)
         .set({ 

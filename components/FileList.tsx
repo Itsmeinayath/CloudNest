@@ -5,7 +5,6 @@ import FileIcon from "./FileIcon";
 import FileAction from "./FileAction";
 import { Star } from "lucide-react";
 
-// This interface defines all the functions the component needs from its parent.
 interface FileListProps {
   files: FileType[];
   onFolderClick: (folder: FileType) => void;
@@ -13,7 +12,7 @@ interface FileListProps {
   onDelete: (file: FileType) => void;
   onRestore: (file: FileType) => void;
   onDeleteForever: (file: FileType) => void;
-  onViewDetails: (file: FileType) => void; // Add the missing prop here
+  onViewDetails: (file: FileType) => void;
 }
 
 export default function FileList({ 
@@ -23,7 +22,7 @@ export default function FileList({
   onDelete,
   onRestore,
   onDeleteForever,
-  onViewDetails // Destructure the new prop
+  onViewDetails
 }: FileListProps) {
 
   const formatFileSize = (bytes: number): string => {
@@ -42,13 +41,13 @@ export default function FileList({
         return (
           <div
             key={file.id}
-            className="group relative bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500"
+            className="group relative bg-[#12141a] border border-[rgba(255,255,255,0.06)] rounded-xl cursor-pointer hover:border-[rgba(255,255,255,0.12)] hover:bg-[#1a1d25] transition-all duration-200 overflow-hidden flex flex-col"
             onDoubleClick={() => {
               if (file.isFolder) onFolderClick(file);
             }}
           >
-            <div className="absolute top-2 right-2 z-20">
-              {/* THE FIX: Pass all the props down to the FileAction component */}
+            {/* Action menu */}
+            <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
               <FileAction 
                 file={file} 
                 onStar={onStar} 
@@ -59,30 +58,37 @@ export default function FileList({
               />
             </div>
 
+            {/* Star badge */}
             {file.isStarred && (
-              <div className="absolute top-2 left-2 z-10 p-1 bg-white/80 dark:bg-gray-900/80 rounded-full shadow">
-                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+              <div className="absolute top-2.5 left-2.5 z-10 p-1.5 bg-[#12141a]/80 backdrop-blur-sm rounded-full border border-[rgba(255,255,255,0.08)]">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
               </div>
             )}
 
-            <div className="h-32 w-full flex items-center justify-center">
+            {/* Preview */}
+            <div className="h-36 w-full flex items-center justify-center relative z-10 p-4">
               {isImage && (file.thumbnailUrl || file.fileUrl) ? (
-                <img
-                  src={file.thumbnailUrl || file.fileUrl!}
-                  alt={`Preview of ${file.name}`}
-                  className="w-full h-full object-cover rounded-t-lg"
-                />
+                <div className="w-full h-full rounded-lg overflow-hidden border border-[rgba(255,255,255,0.06)]">
+                  <img
+                    src={file.thumbnailUrl || file.fileUrl!}
+                    alt={`Preview of ${file.name}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               ) : (
-                <FileIcon file={file} />
+                <div className="transform group-hover:scale-105 transition-transform duration-300">
+                  <FileIcon file={file} />
+                </div>
               )}
             </div>
 
-            <div className="p-3 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+            {/* File info */}
+            <div className="p-3.5 border-t border-[rgba(255,255,255,0.04)] mt-auto">
+              <p className="text-sm font-medium text-[#e0e0e5] truncate group-hover:text-white transition-colors">
                 {file.name}
               </p>
               {!file.isFolder && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-[#5c6070] mt-1">
                   {formatFileSize(file.size)}
                 </p>
               )}

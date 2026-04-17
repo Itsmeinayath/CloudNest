@@ -11,7 +11,7 @@ type FileActionProps = {
   onDelete: (file: FileType) => void;
   onRestore: (file: FileType) => void;
   onDeleteForever: (file: FileType) => void;
-  onViewDetails: (file: FileType) => void; // New prop to open the modal
+  onViewDetails: (file: FileType) => void;
 };
 
 export default function FileAction({ file, onStar, onDelete, onRestore, onDeleteForever, onViewDetails }: FileActionProps) {
@@ -28,20 +28,18 @@ export default function FileAction({ file, onStar, onDelete, onRestore, onDelete
 
   return (
     <div className="relative" ref={menuRef}>
-      <button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
-        <MoreVertical className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+      <button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} className="p-1.5 rounded-lg bg-[#12141a]/80 backdrop-blur-sm border border-[rgba(255,255,255,0.08)] hover:bg-[#1a1d25] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+        <MoreVertical className="w-4 h-4 text-[#8b8fa3]" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+        <div className="absolute top-full right-0 mt-2 w-48 bg-[#1a1d25] border border-[rgba(255,255,255,0.08)] rounded-xl shadow-xl shadow-black/40 z-10 overflow-hidden">
           <ul className="py-1">
-            {/* --- NEW "VIEW DETAILS" BUTTON --- */}
             <FileActionButton onClick={() => { onViewDetails(file); setIsOpen(false); }}>
               <Info className="w-4 h-4 mr-3" />
               View Details
             </FileActionButton>
 
-            {/* --- CONTEXT-AWARE ACTIONS --- */}
             {file.isTrash ? (
               <>
                 <FileActionButton onClick={() => { onRestore(file); setIsOpen(false); }}>
@@ -50,7 +48,7 @@ export default function FileAction({ file, onStar, onDelete, onRestore, onDelete
                 </FileActionButton>
                 <FileActionButton 
                   onClick={() => { onDeleteForever(file); setIsOpen(false); }}
-                  className="!text-red-600 dark:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/50"
+                  className="!text-rose-400 hover:!bg-rose-500/10"
                 >
                   <Trash className="w-4 h-4 mr-3" />
                   Delete Forever
@@ -59,7 +57,7 @@ export default function FileAction({ file, onStar, onDelete, onRestore, onDelete
             ) : (
               <>
                 <FileActionButton onClick={() => { onStar(file); setIsOpen(false); }}>
-                  <Star className={`w-4 h-4 mr-3 ${file.isStarred ? 'text-yellow-500 fill-current' : ''}`} />
+                  <Star className={`w-4 h-4 mr-3 ${file.isStarred ? 'text-amber-400 fill-current' : ''}`} />
                   {file.isStarred ? 'Unstar' : 'Star'}
                 </FileActionButton>
                 
@@ -72,7 +70,7 @@ export default function FileAction({ file, onStar, onDelete, onRestore, onDelete
 
                 <FileActionButton 
                   onClick={() => { onDelete(file); setIsOpen(false); }}
-                  className="!text-red-600 dark:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/50"
+                  className="!text-rose-400 hover:!bg-rose-500/10"
                 >
                   <Trash2 className="w-4 h-4 mr-3" />
                   Move to Trash

@@ -28,7 +28,7 @@ export default function CreateFolderButton({ parentId, onSuccess }: CreateFolder
         body: JSON.stringify({
           name: folderName,
           parentId: parentId,
-          isFolder: true, // This tells our backend to create a folder
+          isFolder: true,
         }),
       });
 
@@ -36,10 +36,9 @@ export default function CreateFolderButton({ parentId, onSuccess }: CreateFolder
         throw new Error('Failed to create folder.');
       }
 
-      // Success!
       setIsOpen(false);
       setFolderName('');
-      onSuccess(); // Refresh the file list in the parent component
+      onSuccess();
 
     } catch (err: any) {
       setError(err.message || 'An error occurred.');
@@ -52,25 +51,24 @@ export default function CreateFolderButton({ parentId, onSuccess }: CreateFolder
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-md shadow-indigo-600/20"
       >
-        <FolderPlus className="w-5 h-5" />
+        <FolderPlus className="w-4 h-4" />
         Create Folder
       </button>
 
-      {/* Modal Dialog */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Folder</h3>
-              <button onClick={() => setIsOpen(false)} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative bg-[#1a1d25] border border-[rgba(255,255,255,0.08)] rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md">
+            <div className="flex items-center justify-between p-5 border-b border-[rgba(255,255,255,0.06)]">
+              <h3 className="text-lg font-semibold text-white">Create New Folder</h3>
+              <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-[#22252f] transition-colors">
+                <X className="w-4 h-4 text-[#8b8fa3]" />
               </button>
             </div>
             <form onSubmit={handleCreateFolder}>
-              <div className="p-4">
-                <label htmlFor="folderName" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+              <div className="p-5">
+                <label htmlFor="folderName" className="text-sm font-medium text-[#8b8fa3] mb-2 block">
                   Folder Name
                 </label>
                 <input
@@ -78,18 +76,18 @@ export default function CreateFolderButton({ parentId, onSuccess }: CreateFolder
                   type="text"
                   value={folderName}
                   onChange={(e) => setFolderName(e.target.value)}
-                  placeholder="e.g., Summer Vacation"
-                  className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Project Assets"
+                  className="w-full bg-[#12141a] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-2.5 text-[#f0f0f3] placeholder-[#5c6070] focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 transition-all"
                   autoFocus
                   required
                 />
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {error && <p className="text-rose-400 text-sm mt-2">{error}</p>}
               </div>
-              <div className="flex justify-end p-4 border-t dark:border-gray-700">
+              <div className="flex justify-end p-5 border-t border-[rgba(255,255,255,0.06)]">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:bg-blue-400 dark:disabled:bg-blue-800"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors disabled:opacity-50 shadow-md shadow-indigo-600/20"
                 >
                   {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isLoading ? 'Creating...' : 'Create Folder'}

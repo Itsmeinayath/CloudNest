@@ -12,7 +12,7 @@ export default function FileActionButton({ onClick, children, className = '' }: 
   return (
     <li
       onClick={onClick}
-      className={`flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors ${className}`}
+      className={`flex items-center px-4 py-2.5 text-sm text-[#8b8fa3] hover:text-[#f0f0f3] hover:bg-[#22252f] cursor-pointer transition-colors ${className}`}
     >
       {children}
     </li>
