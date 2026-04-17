@@ -21,25 +21,18 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim()) return;
-
     setIsLoading(true);
     setError(null);
     setGeneratedImage(null);
-
     try {
       const response = await fetch('/api/gemini/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate image. Please try a different prompt.');
-      }
-
+      if (!response.ok) throw new Error('Failed to generate image.');
       const data = await response.json();
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
-
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
     } finally {
@@ -49,26 +42,19 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
 
   const handleSaveToCloudNest = async () => {
     if (!generatedImage) return;
-    
     setIsSaving(true);
     setError(null);
-
     try {
       const uploadResponse = await fetch('/api/imagekit/upload-generated', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-              base64Image: generatedImage,
-              fileName: `${prompt.substring(0, 20).replace(/\s/g, '_')}_${Date.now()}.png`,
-          }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          base64Image: generatedImage,
+          fileName: `${prompt.substring(0, 20).replace(/\s/g, '_')}_${Date.now()}.png`,
+        }),
       });
-
-      if (!uploadResponse.ok) {
-          throw new Error('Failed to upload the generated image.');
-      }
-
+      if (!uploadResponse.ok) throw new Error('Failed to upload.');
       const imageKitData = await uploadResponse.json();
-
       await fetch('/api/files', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -81,17 +67,15 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
           mimeType: imageKitData.mimeType,
           imageKitFileId: imageKitData.fileId,
           parentId: currentFolderId,
-          description: `AI-generated image based on the prompt: "${prompt}"`,
+          description: `AI-generated image: "${prompt}"`,
         }),
       });
-      
       onClose();
       onSuccess();
-
     } catch (err: any) {
-        setError(err.message || "Failed to save the image.");
+      setError(err.message || "Failed to save.");
     } finally {
-        setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -99,7 +83,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative bg-[#1a1d25] border border-[rgba(255,255,255,0.08)] rounded-2xl shadow-2xl shadow-black/50 w-full max-w-lg"
@@ -113,7 +97,6 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
             <X className="w-4 h-4 text-[#8b8fa3]" />
           </button>
         </div>
-        
         <div className="p-6">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div>
@@ -124,7 +107,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
                 id="prompt"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., A majestic lion wearing a crown, photorealistic style"
+                placeholder="e.g., A majestic lion wearing a crown"
                 className="w-full h-24 bg-[#12141a] border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-2.5 text-[#f0f0f3] placeholder-[#5c6070] focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500/50 transition-all resize-none"
                 required
               />
@@ -138,9 +121,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
               {isLoading ? 'Generating...' : 'Generate Image'}
             </button>
           </form>
-
           {error && <p className="text-rose-400 text-sm mt-4 text-center">{error}</p>}
-
           <div className="mt-6">
             {isLoading && (
               <div className="w-full h-64 bg-[#12141a] border border-[rgba(255,255,255,0.06)] rounded-xl flex items-center justify-center animate-pulse">
@@ -149,7 +130,7 @@ export default function GenerateImageModal({ isOpen, onClose, onSuccess, current
             )}
             {generatedImage && (
               <div className="space-y-4">
-                <img src={generatedImage} alt="AI generated image" className="w-full rounded-xl border border-[rgba(255,255,255,0.06)]" />
+                <img src={generatedImage} alt="AI generated" className="w-full rounded-xl border border-[rgba(255,255,255,0.06)]" />
                 <button
                   onClick={handleSaveToCloudNest}
                   disabled={isSaving}

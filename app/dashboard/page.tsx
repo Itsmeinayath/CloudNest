@@ -17,7 +17,6 @@ export default async function DashboardPage() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <DashboardContent 
           userId={user.id} 
-          userName={user.firstName || user.emailAddresses[0].emailAddress} 
         />
       </main>
     </div>

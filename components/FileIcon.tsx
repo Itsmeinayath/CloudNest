@@ -1,6 +1,6 @@
 "use client";
 
-import { File, Folder, Image as ImageIcon, Music, Video, FileText, Archive } from 'lucide-react';
+import { File, Folder, Music, Video, FileText, Archive } from 'lucide-react';
 import type { File as FileType } from '@/lib/db/schema';
 
 /**

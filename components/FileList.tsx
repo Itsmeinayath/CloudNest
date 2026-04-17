@@ -46,7 +46,6 @@ export default function FileList({
               if (file.isFolder) onFolderClick(file);
             }}
           >
-            {/* Action menu */}
             <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
               <FileAction 
                 file={file} 
@@ -58,14 +57,12 @@ export default function FileList({
               />
             </div>
 
-            {/* Star badge */}
             {file.isStarred && (
               <div className="absolute top-2.5 left-2.5 z-10 p-1.5 bg-[#12141a]/80 backdrop-blur-sm rounded-full border border-[rgba(255,255,255,0.08)]">
                 <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
               </div>
             )}
 
-            {/* Preview */}
             <div className="h-36 w-full flex items-center justify-center relative z-10 p-4">
               {isImage && (file.thumbnailUrl || file.fileUrl) ? (
                 <div className="w-full h-full rounded-lg overflow-hidden border border-[rgba(255,255,255,0.06)]">
@@ -82,7 +79,6 @@ export default function FileList({
               )}
             </div>
 
-            {/* File info */}
             <div className="p-3.5 border-t border-[rgba(255,255,255,0.04)] mt-auto">
               <p className="text-sm font-medium text-[#e0e0e5] truncate group-hover:text-white transition-colors">
                 {file.name}

@@ -51,8 +51,9 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     
-    // THE FIX: Use a let for name so we can provide a fallback
-    let { name, parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+    // THE FIX: Use const for destructured variables and let for name
+    const { parentId, isFolder, fileUrl, thumbnailUrl, size, type, mimeType, imageKitFileId, description } = body;
+    let { name } = body;
 
     // If the name is missing (especially for AI generated images), create a fallback name.
     if (!name && description) {
@@ -82,12 +83,24 @@ export async function POST(req: NextRequest) {
         description: null,
       };
     } else {
+      // Log incoming data for AI-generated images to help debug thumbnail issues
+      if (description && description.includes('AI-generated')) {
+        console.log('[POST /api/files] AI image data:', {
+          name,
+          fileUrl,
+          thumbnailUrl,
+          size,
+          mimeType,
+          imageKitFileId
+        });
+      }
+      
       newRecord = {
         name,
         userId,
         path: name,
         fileUrl,
-        thumbnailUrl,
+        thumbnailUrl: thumbnailUrl || null, // Explicitly handle undefined/empty thumbnails
         size,
         type,
         mimeType,

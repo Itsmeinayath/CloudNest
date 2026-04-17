@@ -31,16 +31,8 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
     }
   };
 
-  const handleUploadStart = () => {
-    setStatus('uploading');
-    setError(null);
-  };
-
-  const handleError = (err: unknown) => {
-    setStatus('error');
-    setError('Upload failed. Please try again.');
-    console.error("ImageKit Upload Error:", err);
-  };
+  const handleUploadStart = () => { setStatus('uploading'); setError(null); };
+  const handleError = (err: unknown) => { setStatus('error'); setError('Upload failed.'); console.error(err); };
 
   const handleSuccess = async (res: any) => {
     try {
@@ -48,27 +40,14 @@ export default function FileUploadForm({ currentFolder, onUploadSuccess }: FileU
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: res.name,
-          fileUrl: res.url,
-          thumbnailUrl: res.thumbnailUrl,
-          size: res.size,
-          type: "file",
-          mimeType: fileMimeTypeRef.current,
-          imageKitFileId: res.fileId,
-          parentId: currentFolder,
+          name: res.name, fileUrl: res.url, thumbnailUrl: res.thumbnailUrl,
+          size: res.size, type: "file", mimeType: fileMimeTypeRef.current,
+          imageKitFileId: res.fileId, parentId: currentFolder,
         }),
       });
-
-      if (!dbResponse.ok) {
-        throw new Error("Failed to save file metadata.");
-      }
-      
+      if (!dbResponse.ok) throw new Error("Failed to save file metadata.");
       setStatus('success');
-      setTimeout(() => {
-        onUploadSuccess();
-        setStatus('idle');
-      }, 1500);
-
+      setTimeout(() => { onUploadSuccess(); setStatus('idle'); }, 1500);
     } catch (dbError) {
       console.error("DB save error:", dbError);
       setError("File uploaded but failed to save.");

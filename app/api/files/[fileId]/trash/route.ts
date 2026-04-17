@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 export async function PATCH(
     req: Request,
-    { params }: { params: { fileId: string } }
+    props: { params: Promise<{ fileId: string }> }
 ) {
     try {
         //1. authenticate user
@@ -16,7 +16,7 @@ export async function PATCH(
         }
 
         //2.get the fileId from the url
-        const { fileId } = params;
+        const { fileId } = await props.params;
         if (!fileId) {
             return NextResponse.json({ error: "File ID is required" }, { status: 400 });
         }
@@ -41,13 +41,14 @@ export async function PATCH(
             .set({
                 isTrash: false,
                 trashedAt: null,
-            }).where(
+            })
+            .where(
                 and(
                     eq(files.id, fileId),
                     eq(files.userId, userId)
                 )
-            )
-        // 6. returm a success response
+            );
+        // 6. return a success response
         return NextResponse.json({ message: "File restored successfully" }, { status: 200 });
 
     } catch (error) {
@@ -60,7 +61,7 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { fileId: string } }
+    props: { params: Promise<{ fileId: string }> }
 )
 {
     try {
@@ -71,7 +72,7 @@ export async function DELETE(
             }
 
             // 2. get the fileId from the url
-            const {fileId} = params;
+            const {fileId} = await props.params;
             if(!fileId) {
                 return NextResponse.json({ error: "File ID is required" }, { status: 400 });
             }

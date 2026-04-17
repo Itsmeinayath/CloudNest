@@ -6,7 +6,7 @@ import { ArrowRight, Cloud, Lock, Zap, Search, Shield, File as FileIcon, Folder,
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
 
-/* ─── Feature Card ─── */
+/* Feature Card */
 const FeatureCard = ({
   icon,
   title,
@@ -33,7 +33,7 @@ const FeatureCard = ({
   </motion.div>
 );
 
-/* ─── Stat Pill ─── */
+/* Stat Pill */
 const StatPill = ({ value, label }: { value: string; label: string }) => (
   <div className="flex flex-col items-center gap-1 px-6">
     <span className="text-2xl font-bold text-white">{value}</span>
@@ -41,7 +41,7 @@ const StatPill = ({ value, label }: { value: string; label: string }) => (
   </div>
 );
 
-/* ─── High-Fidelity Dashboard Mockup ─── */
+/* High-Fidelity Dashboard Mockup */
 const DashboardPreview = () => (
   <div className="w-full aspect-[16/10] bg-[#0b0d12] rounded-xl overflow-hidden flex flex-col border border-[rgba(255,255,255,0.08)]">
     {/* Window Chrome */}
@@ -122,7 +122,7 @@ const DashboardPreview = () => (
   </div>
 );
 
-/* ─── Page ─── */
+/* Page */
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#0b0d12] text-[#f0f0f3] font-sans overflow-x-hidden">
@@ -195,7 +195,6 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="container mx-auto max-w-5xl"
           >
-            {/* Outer glow frame */}
             <div className="rounded-2xl p-[1px] bg-gradient-to-b from-[rgba(255,255,255,0.1)] to-[rgba(255,255,255,0.02)] shadow-2xl shadow-indigo-900/10">
               <div className="rounded-2xl overflow-hidden">
                 <DashboardPreview />
@@ -204,15 +203,7 @@ export default function HomePage() {
           </motion.div>
         </section>
 
-        {/* Social Proof */}
-        <section className="py-16 px-6 border-y border-[rgba(255,255,255,0.04)] z-10 relative">
-          <div className="container mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-center gap-10 sm:divide-x sm:divide-[rgba(255,255,255,0.06)]">
-            <StatPill value="12K+" label="Teams" />
-            <StatPill value="99.9%" label="Uptime" />
-            <StatPill value="<50ms" label="Latency" />
-            <StatPill value="SOC 2" label="Certified" />
-          </div>
-        </section>
+
 
         {/* Features */}
         <section className="py-24 px-6 z-10 relative">
@@ -235,7 +226,7 @@ export default function HomePage() {
                 description="Enterprise-grade AES-256 encryption ensures only you and your team can access your data." />
               <FeatureCard index={2} icon={<Search className="w-5 h-5" strokeWidth={1.5} />}
                 title="Global Search"
-                description="Press ⌘K to find any file instantly. Our indexer runs continuously in the background." />
+                description="Press Cmd+K to find any file instantly. Our indexer runs continuously in the background." />
               <FeatureCard index={3} icon={<Lock className="w-5 h-5" strokeWidth={1.5} />}
                 title="Granular Permissions"
                 description="Share links with expiration dates, passwords, and fine-grained access controls." />
