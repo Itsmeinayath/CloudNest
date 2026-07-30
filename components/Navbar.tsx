@@ -2,37 +2,45 @@
 
 import Link from "next/link";
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import { Cloud } from "lucide-react";
+import { Cloud, Github } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0b0d12]/80 backdrop-blur-xl border-b border-[rgba(255,255,255,0.06)]">
+    <header className="sticky top-0 z-50 w-full bg-transparent">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/30 transition-shadow">
-            <Cloud className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-semibold text-white tracking-tight text-lg">
+          <Cloud className="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
+          <span className="font-medium text-white tracking-tight text-lg">
             CloudNest
           </span>
         </Link>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <SignedIn>
             <UserButton
               afterSignOutUrl="/"
               appearance={{
                 elements: {
-                  avatarBox: "w-8 h-8 rounded-full ring-1 ring-[rgba(255,255,255,0.1)]",
+                  avatarBox: "w-8 h-8 rounded-full ring-1 ring-white/10",
                 }
               }}
             />
           </SignedIn>
 
           <SignedOut>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://github.com/Itsmeinayath/CloudNest" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-[#8b8fa3] hover:text-white transition-colors flex items-center gap-2 text-sm font-medium"
+              >
+                <Github className="w-4 h-4" />
+                <span className="hidden sm:inline">Star on GitHub</span>
+              </a>
+              <div className="w-[1px] h-4 bg-white/10 hidden sm:block"></div>
               <Link
                 href="/sign-in"
                 className="text-sm font-medium text-[#8b8fa3] hover:text-white transition-colors"
@@ -41,7 +49,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/sign-up"
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-600/25"
+                className="px-5 py-2 text-sm font-medium text-black bg-white rounded-full hover:bg-gray-200 transition-colors shadow-sm"
               >
                 Sign Up
               </Link>
